@@ -55,8 +55,11 @@ def main(args):
 
                 while t < time_steps:  # and not done:
                     t = t + 1
+                    #Ha's actions from doom extractor.
+                    if t % repeat == 0:
+                        action = np.random.rand() * 2.0 - 1.0
+                        repeat = np.random.randint(1, 11)
 
-                    action = config.generate_data_action(t, action)
 
                     obs_sequence.append(observation)
                     action_sequence.append(action)
