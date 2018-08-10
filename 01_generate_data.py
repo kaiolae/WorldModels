@@ -34,6 +34,7 @@ def main(args):
 
         batch_size = min(batch_size, total_episodes)
 
+        total_frames = 0
         while s < total_episodes:
             obs_data = []
             action_data = []
@@ -52,6 +53,7 @@ def main(args):
                 t = 0
                 obs_sequence = []
                 action_sequence = []
+                repeat = np.random.randint(1, 11)
 
                 while t < time_steps:  # and not done:
                     t = t + 1
@@ -60,15 +62,21 @@ def main(args):
                         action = np.random.rand() * 2.0 - 1.0
                         repeat = np.random.randint(1, 11)
 
-
                     obs_sequence.append(observation)
                     action_sequence.append(action)
 
                     observation, reward, done, info = env.step(action)
-                    observation = config.adjust_obs(observation)
+                    #observation = config.adjust_obs(observation)
 
                     if render:
                         env.render()
+
+                    if done: #If we were killed
+                        break
+
+                total_frames += t
+                print("dead at", t, "total recorded frames for this worker", total_frames)
+
 
                 obs_data.append(obs_sequence)
                 action_data.append(action_sequence)

@@ -6,3 +6,17 @@ workon worldmodels
 #To run a single core, a single window
 python 05_train_controller.py car_racing --num_worker 1 --num_worker_trial 4 --num_episode 16 --max_length 1000 --eval_steps 25
 
+---------
+
+Progress so far:
+
+-Implemented a VAE
+-Set up code to unroll episodes in 01_...py
+-Made a script that runs multiple workers, each unrolling a batch of episodes: sh generate_random_rollouts.bash
+-Resulting rollouts get stored in data/
+
+TODO:
+-generating a bunch of rollouts in data/ over the weekend. Take a look at them.
+-train VAE with those rollouts
+-Test VAE in notebook. Hardmaru had code for that.
+

@@ -100,8 +100,10 @@ class DoomTakeCoverWrapper(DoomTakeCoverEnv):
         if action > threshold:
             full_action[10] = 1
 
+
+        #The obs returned here is full resolution, 480 by 640.
         obs, reward, done, _ = super(DoomTakeCoverWrapper, self)._step(full_action)
-        small_obs = _process_frame(obs)
+        small_obs = _process_frame(obs) #Reduces OBS resolution
         self.current_obs = small_obs
         #self.z = self._encode(small_obs)
 
@@ -110,7 +112,8 @@ class DoomTakeCoverWrapper(DoomTakeCoverEnv):
         else:
             self.restart = 0
 
-        return self._current_state(), reward, done, {}
+        #return self._current_state(), reward, done, {}
+        return self.current_obs, reward, done, {}
 
     #def _encode(self, img):
     #    simple_obs = np.copy(img).astype(np.float) / 255.0
@@ -162,10 +165,11 @@ class DoomTakeCoverWrapper(DoomTakeCoverEnv):
             if small_img is None:
                 small_img = np.zeros(shape=(SCREEN_Y, SCREEN_X, 3), dtype=np.uint8)
             small_img = resize(small_img, (img.shape[0], img.shape[0]))
-            vae_img = self._decode(self.z)
-            vae_img = resize(vae_img, (img.shape[0], img.shape[0]))
-            all_img = np.concatenate((img, small_img, vae_img), axis=1)
-            img = all_img
+            #vae_img = self._decode(self.z)
+            #vae_img = resize(vae_img, (img.shape[0], img.shape[0]))
+            #all_img = np.concatenate((img, small_img, vae_img), axis=1)
+            #img = all_img
+            img = small_img
             if mode == 'rgb_array':
                 return img
             elif mode is 'human':
