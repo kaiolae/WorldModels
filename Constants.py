@@ -1,4 +1,5 @@
 #Based on the doom settings from original paper.
+from collections import namedtuple
 
 model_rnn_size = 512
 model_num_mixture = 5
