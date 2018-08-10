@@ -1,0 +1,8 @@
+To start the worldmodels virtualenv:
+export WORKON_HOME=~/.virtualenvs
+source /usr/local/bin/virtualenvwrapper.sh
+workon worldmodels
+
+#To run a single core, a single window
+python 05_train_controller.py car_racing --num_worker 1 --num_worker_trial 4 --num_episode 16 --max_length 1000 --eval_steps 25
+

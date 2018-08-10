@@ -54,7 +54,7 @@ class DoomTakeCoverWrapper(DoomTakeCoverEnv):
         self.observation_space = Box(low=0, high=255, shape=(SCREEN_Y, SCREEN_X, 3))
         self.actual_observation_space = spaces.Box(low=-50., high=50., shape=(self.obs_size))
 
-        self.zero_state = self.rnn.sess.run(self.rnn.zero_state)
+        #self.zero_state = self.rnn.sess.run(self.rnn.zero_state)
 
         self._seed()
 
@@ -133,7 +133,8 @@ class DoomTakeCoverWrapper(DoomTakeCoverEnv):
         #self.z = self._encode(small_obs)
         self.restart = 1
         self.frame_count = 0
-        return self._current_state()
+        return obs
+        #return self._current_state()
 
     #def _current_state(self):
     #    if model_state_space == 2:
