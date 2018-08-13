@@ -5,6 +5,17 @@ import argparse
 import numpy as np
 import config
 
+# Only for GPU use:
+import os
+os.environ["CUDA_VISIBLE_DEVICES"]="0"
+
+import tensorflow as tf
+tf_config = tf.ConfigProto()
+tf_config.gpu_options.allow_growth = True
+sess = tf.Session(config=tf_config)
+from keras import backend as K
+K.set_session(sess)
+
 
 def main(args):
     start_batch = args.start_batch
