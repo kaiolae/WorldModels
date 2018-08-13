@@ -14,6 +14,8 @@ Progress so far:
 -Set up code to unroll episodes in 01_...py
 -Made a script that runs multiple workers, each unrolling a batch of episodes: sh generate_random_rollouts.bash
 -Resulting rollouts get stored in data/
+-Checked Rollouts in notebook. Looking good! Time to feed into VAE.
+-Fixed data loading in the VAE. TODO: Test
 
 TODO:
 -generating a bunch of rollouts in data/ over the weekend. Take a look at them.

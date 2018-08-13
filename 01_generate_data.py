@@ -6,7 +6,7 @@ import random
 import config
 # import matplotlib.pyplot as plt
 
-from env import make_env
+from env import make_env, _process_frame
 
 import argparse
 
@@ -42,7 +42,8 @@ def main(args):
             for i_episode in range(batch_size):
                 print('-----')
                 observation = env.reset()
-                observation = config.adjust_obs(observation)
+                observation=_process_frame(observation) #Reducing resolution before storing
+                #observation = config.adjust_obs(observation)
 
                 # plt.imshow(observation)
                 # plt.show()
