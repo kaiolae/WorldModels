@@ -1,6 +1,6 @@
 # python 02_train_vae.py --new_model
 
-from VAE.world_model_vae2 import VAE
+from VAE.world_model_vae_2 import VAE
 import argparse
 import numpy as np
 import config
@@ -34,16 +34,17 @@ def main(args):
         if counter != 0:
             wm_images_as_numpy = np.concatenate((wm_images_as_numpy, np.array(d)))
         counter += 1
-    wm_images_as_numpy = np.asarray(wm_images)
+    wm_images_as_numpy = np.asarray(wm_images_as_numpy)
     print("Shape after load: ", wm_images_as_numpy.shape)
     wm_images_as_numpy = wm_images_as_numpy.astype('float32') / 255.
     wm_images_as_numpy = wm_images_as_numpy.reshape((wm_images_as_numpy.shape[0],) + original_img_size)
 
     # training
-    history = VAE.train(wm_images_as_numpy)
+    vae = VAE()
+    history = vae.train(wm_images_as_numpy)
             #validation_data=(x_test, None))
 
-    VAE.save_weights('./models/world_model_vae.h5')
+    vae.save_weights('./models/world_model_vae.h5')
 
     # save training history
     fname = './models/world_model_training_history.h5'
