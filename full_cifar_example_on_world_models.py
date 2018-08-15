@@ -138,7 +138,7 @@ wm_images_as_numpy = np.array(wm_images[0])
 counter = 0
 for d in wm_images:
     if counter != 0:
-        wm_images_as_numpy = np.concatenate((wm_images, np.array(d)))
+        wm_images_as_numpy = np.concatenate((wm_images_as_numpy, np.array(d)))
     counter += 1
 wm_images_as_numpy = np.asarray(wm_images)
 print("Shape after load: ", wm_images_as_numpy.shape)
