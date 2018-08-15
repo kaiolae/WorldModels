@@ -6,8 +6,8 @@ import numpy as np
 import config
 
 # Only for GPU use:
-import os
-os.environ["CUDA_VISIBLE_DEVICES"]="0"
+#import os
+#os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
 import tensorflow as tf
 tf_config = tf.ConfigProto()

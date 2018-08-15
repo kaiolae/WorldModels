@@ -14,7 +14,7 @@ from keras.callbacks import EarlyStopping
 INPUT_DIM = (64,64,3)
 
 #Encoding parameters
-CONV_FILTERS = [32,64,128,256]
+CONV_FILTERS = [32,64,64,128]
 CONV_KERNEL_SIZES = [4,4,4,4]
 CONV_STRIDES = [2,2,2,2]
 CONV_ACTIVATIONS = ['relu','relu','relu','relu']
@@ -22,7 +22,7 @@ CONV_ACTIVATIONS = ['relu','relu','relu','relu']
 DENSE_SIZE = 1024
 
 #Decoding parameters
-CONV_T_FILTERS = [128,64,32,3]
+CONV_T_FILTERS = [64,64,32,3]
 CONV_T_KERNEL_SIZES = [5,5,6,6]
 CONV_T_STRIDES = [2,2,2,2]
 CONV_T_ACTIVATIONS = ['relu','relu','relu','sigmoid']
@@ -117,7 +117,7 @@ class VAE():
 
         #Final loss just sums the two. In Keras, the mean, rather than sum, was used here. Shouldn't make a difference?
         def vae_loss(y_true, y_pred):
-            return vae_r_loss(y_true, y_pred) + vae_kl_loss(y_true, y_pred)
+            return vae_r_loss(y_true, y_pred)# + vae_kl_loss(y_true, y_pred)
         print("Compiling")
         #Compiling the network, and returning the models.
         vae.compile(optimizer='rmsprop', loss=vae_loss, metrics=[vae_r_loss, vae_kl_loss])
@@ -134,6 +134,8 @@ class VAE():
         #Not part of original code. Consider dropping.
         earlystop = EarlyStopping(monitor='val_loss', min_delta=0.0001, patience=5, verbose=0, mode='auto')
         callbacks_list = [earlystop]
+
+        print("VAE input: ", data.shape)
 
         self.model.fit(data, data,
                        shuffle=True,
