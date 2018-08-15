@@ -134,12 +134,19 @@ vae.summary()
 
 #TODO Loading just one set of images. Load more later.
 wm_images = np.load('./data/obs_data_doomrnn_1.npy')
-print("Shape after load: ", wm_images.shape)
-wm_images = wm_images.astype('float32') / 255.
-wm_images = wm_images.reshape((wm_images.shape[0],) + original_img_size)
+wm_images_as_numpy = np.array(wm_images[0])
+counter = 0
+for d in wm_images:
+    if counter != 0:
+        wm_images_as_numpy = np.concatenate((wm_images, np.array(d)))
+    counter += 1
+wm_images_as_numpy = np.asarray(wm_images)
+print("Shape after load: ", wm_images_as_numpy.shape)
+wm_images_as_numpy = wm_images_as_numpy.astype('float32') / 255.
+wm_images_as_numpy = wm_images_as_numpy.reshape((wm_images_as_numpy.shape[0],) + original_img_size)
 
 # training
-history = vae.fit(wm_images,
+history = vae.fit(wm_images_as_numpy,
         shuffle=True,
         epochs=epochs,
         batch_size=batch_size)
