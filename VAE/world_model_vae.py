@@ -11,7 +11,8 @@ from keras.callbacks import EarlyStopping
 
 #Tried to make these parameters match the original World Models paper.
 
-INPUT_DIM = (64,64,3)
+INPUT_DIM = (32,32,3)
+#INPUT_DIM = (64,64,3)
 
 #Encoding parameters
 CONV_FILTERS = [32,64,64,128]
