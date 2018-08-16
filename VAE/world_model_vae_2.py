@@ -139,6 +139,7 @@ class VAE():
         # Extra methods just for printing the loss.
         # Reconstruction loss. Mean squared error between input image and reconstruction.
         def vae_r_loss(y_true, y_pred):
+            #TODO Some small difference here from Ha's code too.
             y_true_flat = K.flatten(y_true)
             y_pred_flat = K.flatten(y_pred)
             # Mean squared error -same as original paper.
@@ -150,8 +151,13 @@ class VAE():
         # Follows formula from original paper. Difference from Keras cookbook: There, this loss was multiplied by
         # -0.0005 instead of -0.5. Weird.
         def vae_kl_loss(y_true, y_pred):
-            #TODO Hardmaru had some additional trick to limit the max value here...
-            return - 0.5 * K.mean(1 + z_log_var - K.square(z_mean) - K.exp(z_log_var), axis=-1)
+            #TODO Hardmaru had some additional trick to limit the min value here...
+            #Testing the trick to limit min value
+            kl_tolerance = 0.5
+            kl_loss = - 0.5 * K.mean(1 + z_log_var - K.square(z_mean) - K.exp(z_log_var), axis=-1)
+            kl_loss = K.max(kl_loss, kl_tolerance*latent_dim)
+            return K.mean(kl_loss)
+            #return - 0.5 * K.mean(1 + z_log_var - K.square(z_mean) - K.exp(z_log_var), axis=-1)
             #return - 0.5 * K.mean(1 + z_log_var - K.square(z_mean) - K.exp(z_log_var), axis=-1)
 
         #Final loss just sums the two. In Keras, the mean, rather than sum, was used here. Shouldn't make a difference?
