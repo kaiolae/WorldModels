@@ -34,8 +34,10 @@ def main(args):
     new_model = args.new_model
     epochs = args.epochs
     save_interval = args.save_interval
-    savefolder = args.savefolder
-
+    if args.savefolder:
+        savefolder = args.savefolder
+    else:
+        savefolder = "./models/"
 
     vae = VAE()
     history = []
