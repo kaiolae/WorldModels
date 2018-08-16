@@ -153,7 +153,7 @@ class VAE():
         def vae_kl_loss(y_true, y_pred):
             #TODO Hardmaru had some additional trick to limit the min value here...
             #Testing the trick to limit min value
-            kl_tolerance = 0.5
+            kl_tolerance = 0.01
             kl_loss = - 0.5 * K.mean(1 + z_log_var - K.square(z_mean) - K.exp(z_log_var), axis=-1)
             kl_loss = K.maximum(kl_loss, kl_tolerance*latent_dim)
             return K.mean(kl_loss)

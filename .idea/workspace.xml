@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="d2e15954-9e0c-499c-a594-76f0b58e01fe" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/02_train_vae_2.py" beforeDir="false" afterPath="$PROJECT_DIR$/02_train_vae_2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/VAE/world_model_vae_2.py" beforeDir="false" afterPath="$PROJECT_DIR$/VAE/world_model_vae_2.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -26,13 +27,13 @@
         <counts>
           <entry key="Python Console" value="3" />
           <entry key="dummy" value="3" />
-          <entry key="py" value="6342" />
+          <entry key="py" value="6355" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="PLAIN_TEXT" value="3" />
-          <entry key="Python" value="6345" />
+          <entry key="Python" value="6358" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -90,14 +91,14 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/VAE/world_model_vae_2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-510">
-              <caret line="41" selection-start-line="41" selection-end-line="42" />
+            <state relative-caret-position="320">
+              <caret line="155" column="31" selection-start-line="155" selection-start-column="31" selection-end-line="155" selection-end-column="31" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
-                <marker date="1534425569282" expanded="true" signature="6347:6360" ph="..." />
+                <marker date="1534426889875" expanded="true" signature="6347:6360" ph="..." />
               </folding>
             </state>
           </provider>
@@ -112,11 +113,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/02_train_vae_2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="438">
-              <caret line="90" column="44" lean-forward="true" selection-start-line="90" selection-start-column="44" selection-end-line="90" selection-end-column="44" />
+            <state relative-caret-position="540">
+              <caret line="88" column="53" selection-start-line="88" selection-start-column="53" selection-end-line="88" selection-end-column="53" />
               <folding>
                 <element signature="e#37#46#0" expanded="true" />
               </folding>
@@ -214,8 +215,8 @@
       <find>ear</find>
       <find>batch</find>
       <find>256</find>
-      <find>train(</find>
       <find>batch_si</find>
+      <find>train(</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -237,8 +238,8 @@
         <option value="$PROJECT_DIR$/full_cifar_example_on_world_models.py" />
         <option value="$PROJECT_DIR$/full_cifar_example_on_woldmodels_2.py" />
         <option value="$PROJECT_DIR$/VAE/world_model_vae.py" />
-        <option value="$PROJECT_DIR$/VAE/world_model_vae_2.py" />
         <option value="$PROJECT_DIR$/02_train_vae_2.py" />
+        <option value="$PROJECT_DIR$/VAE/world_model_vae_2.py" />
       </list>
     </option>
   </component>
@@ -647,23 +648,23 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/VAE/world_model_vae_2.py">
+    <entry file="file://$PROJECT_DIR$/02_train_vae_2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-510">
-          <caret line="41" selection-start-line="41" selection-end-line="42" />
+        <state relative-caret-position="540">
+          <caret line="88" column="53" selection-start-line="88" selection-start-column="53" selection-end-line="88" selection-end-column="53" />
           <folding>
-            <element signature="e#0#9#0" expanded="true" />
-            <marker date="1534425569282" expanded="true" signature="6347:6360" ph="..." />
+            <element signature="e#37#46#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/02_train_vae_2.py">
+    <entry file="file://$PROJECT_DIR$/VAE/world_model_vae_2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="438">
-          <caret line="90" column="44" lean-forward="true" selection-start-line="90" selection-start-column="44" selection-end-line="90" selection-end-column="44" />
+        <state relative-caret-position="320">
+          <caret line="155" column="31" selection-start-line="155" selection-start-column="31" selection-end-line="155" selection-end-column="31" />
           <folding>
-            <element signature="e#37#46#0" expanded="true" />
+            <element signature="e#0#9#0" expanded="true" />
+            <marker date="1534426889875" expanded="true" signature="6347:6360" ph="..." />
           </folding>
         </state>
       </provider>
