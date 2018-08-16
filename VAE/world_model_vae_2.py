@@ -17,7 +17,7 @@ intermediate_dim = 512
 epsilon_std = 1.0
 filters = 64
 num_conv = 3
-batch_size = 256
+batch_size = 100
 # tensorflow uses channels_last
 # theano uses channels_first
 if K.image_data_format() == 'channels_first':
