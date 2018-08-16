@@ -94,6 +94,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=('Train VAE'))
     parser.add_argument('--start_batch', type=int, default=0, help='The start batch number')
     parser.add_argument('--max_batch', type=int, default=0, help='The max batch number')
+    parser.add_argument('--save_interval', type=int, default=0, help='How many epochs between storing model. Default is only after last epoch.')
 
     parser.add_argument('--epochs', type=int, default=1, help='The number of passes through the entire data set.')
     parser.add_argument('--new_model', action='store_true', help='start a new model from scratch?')
