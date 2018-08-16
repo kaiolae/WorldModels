@@ -183,7 +183,7 @@ class VAE():
 
         print("VAE input: ", data.shape)
 
-        return self.model.fit(data,
+        return self.model.fit(data, data,
                        shuffle=True,
                        epochs=epochs,
                        batch_size=batch_size)
