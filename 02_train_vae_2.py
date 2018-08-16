@@ -41,45 +41,45 @@ def main(args):
             print("Either set --new_model or ensure ./vae/weights.h5 exists")
             raise
 
-    for i in range(epochs):
-        for batch_num in range(start_batch, max_batch + 1):
-            print('Building batch {}...'.format(batch_num))
-            first_item = True
 
-            for env_name in config.train_envs:
-                print("Loading data from ", './data/obs_data_' + env_name + '_' + str(batch_num) + '.npy')
-                try:
-                    new_data = np.load('./data/obs_data_' + env_name + '_' + str(batch_num) + '.npy')
-                    print("Shape after load: ", new_data.shape)
-                    if first_item:
-                        data = new_data
-                        first_item = False
-                    else:
-                        data = np.concatenate([data, new_data])
-                        print("Shape after concat: ", data.shape)
-                    print('Found {}...current data size = {} episodes'.format(env_name, len(data)))
-                except:
-                    pass
+    for batch_num in range(start_batch, max_batch + 1):
+        print('Building batch {}...'.format(batch_num))
+        first_item = True
 
-        if first_item == False:  # i.e. data has been found for this batch number
-            # Putting all images into one large 4D numpy array (img nr, width, height, color channels)
-            data_as_numpy = np.array(data[0])
-            counter = 0
-            for d in data:
-                if counter != 0:
-                    data_as_numpy = np.concatenate((data_as_numpy, np.array(d)))
-                counter += 1
-            data_as_numpy = np.asarray(data_as_numpy)
+        for env_name in config.train_envs:
+            print("Loading data from ", './data/obs_data_' + env_name + '_' + str(batch_num) + '.npy')
+            try:
+                new_data = np.load('./data/obs_data_' + env_name + '_' + str(batch_num) + '.npy')
+                print("Shape after load: ", new_data.shape)
+                if first_item:
+                    data = new_data
+                    first_item = False
+                else:
+                    data = np.concatenate([data, new_data])
+                    print("Shape after concat: ", data.shape)
+                print('Found {}...current data size = {} episodes'.format(env_name, len(data)))
+            except:
+                pass
 
-            data_as_numpy = data_as_numpy.astype('float32') / 255.
-            data_as_numpy = data_as_numpy.reshape((data_as_numpy.shape[0],) + original_img_size)
-            print("data shape: ", data_as_numpy.shape)
-            # TODO Figure out what format to deliver training data in
-            #                data = np.array([item for obs in data for item in obs])
-            print("Training VAE on data with shape", data_as_numpy.shape)
-            history.append(vae.train(data_as_numpy))
-        else:
-            print('no data found for batch number {}'.format(batch_num))
+    if first_item == False:  # i.e. data has been found for this batch number
+        # Putting all images into one large 4D numpy array (img nr, width, height, color channels)
+        data_as_numpy = np.array(data[0])
+        counter = 0
+        for d in data:
+            if counter != 0:
+                data_as_numpy = np.concatenate((data_as_numpy, np.array(d)))
+            counter += 1
+        data_as_numpy = np.asarray(data_as_numpy)
+
+        data_as_numpy = data_as_numpy.astype('float32') / 255.
+        data_as_numpy = data_as_numpy.reshape((data_as_numpy.shape[0],) + original_img_size)
+        print("data shape: ", data_as_numpy.shape)
+        # TODO Figure out what format to deliver training data in
+        #                data = np.array([item for obs in data for item in obs])
+        print("Training VAE on data with shape", data_as_numpy.shape)
+        history.append(vae.train(data_as_numpy))
+    else:
+        print('no data found for batch number {}'.format(batch_num))
 
     vae.save_weights('./models/world_model_vae.h5')
 
