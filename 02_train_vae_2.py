@@ -1,4 +1,5 @@
 # python 02_train_vae.py --new_model
+import os
 
 from VAE.world_model_vae_2 import VAE
 import argparse
@@ -30,6 +31,9 @@ def main(args):
     max_batch = args.max_batch
     new_model = args.new_model
     epochs = args.epochs
+    save_interval = args.save_interval
+    savefolder = args.savefolder
+
 
     vae = VAE()
     history = []
@@ -78,14 +82,14 @@ def main(args):
         # TODO Figure out what format to deliver training data in
         #                data = np.array([item for obs in data for item in obs])
         print("Training VAE on data with shape", data_as_numpy.shape)
-        history.append(vae.train(data_as_numpy,epochs))
+        history.append(vae.train(data_as_numpy,epochs, savefolder))
     else:
         print('no data found for batch number {}'.format(batch_num))
 
-    vae.save_weights('./models/world_model_vae.h5')
+    vae.save_weights(os.path.join(savefolder,'final_weights.h5'))
 
     # save training history
-    fname = './models/world_model_training_history.h5'
+    fname = os.path.join(savefolder,'world_model_training_history.h5')
     with open(fname, 'wb') as file_pi:
         pickle.dump(history, file_pi)
 
@@ -100,6 +104,7 @@ if __name__ == "__main__":
 
     parser.add_argument('--epochs', type=int, default=1, help='The number of passes through the entire data set.')
     parser.add_argument('--new_model', action='store_true', help='start a new model from scratch?')
+    parser.add_argument('--savefolder', type=str, help="Folder to store results in. Default is ./models/")
     args = parser.parse_args()
 
     main(args)

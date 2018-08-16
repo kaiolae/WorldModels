@@ -1,4 +1,7 @@
+import os
+
 import numpy as np
+from keras.callbacks import ModelCheckpoint
 
 from keras.layers import Input, Dense, Lambda, Flatten, Reshape, Layer
 from keras.layers import Conv2D, Conv2DTranspose
@@ -155,7 +158,7 @@ class VAE():
 
         # entire model
         vae = Model(x, x_decoded_mean_squash)
-        vae.compile(optimizer='rmsprop', loss=vae_loss, metrics=[vae_r_loss, vae_kl_loss])
+        vae.compile(optimizer='rmsprop', loss=vae_loss, metrics=[vae_r_loss, vae_kl_loss, vae_loss])
         vae.summary()
 
         #Just the encoder and decoder
@@ -179,14 +182,27 @@ class VAE():
         self.model.load_weights(filepath)
 
     # Training the VAE
-    def train(self, data, epochs):
+    def train(self, data, epochs, save_interval=0, savefolder = "./models/"):
 
         print("VAE input: ", data.shape)
+
+        #For storing models during runs.
+        #TODO Add option to specify folder.
+        if save_interval:
+            filepath = os.path.join(savefolder,"weights-{epoch:02d}-{loss:.2f}.hdf5")
+            model_saver = ModelCheckpoint(filepath=filepath, monitor='val_vae_loss',save_best_only=True,
+                                          save_weights_only=True, mode='min', period=save_interval)
+            callbacks_list = [model_saver]
+        else:
+            callbacks_list=[]
+
 
         return self.model.fit(data, data,
                        shuffle=True,
                        epochs=epochs,
-                       batch_size=batch_size)
+                       batch_size=batch_size,
+                       callbacks=callbacks_list)
+
 
     def save_weights(self, filepath):
         self.model.save_weights(filepath)

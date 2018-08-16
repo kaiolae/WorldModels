@@ -5,7 +5,7 @@ import numpy as np
 from keras.layers import Input, Conv2D, Flatten, Dense, Conv2DTranspose, Lambda, Reshape
 from keras.models import Model
 from keras import backend as K
-from keras.callbacks import EarlyStopping
+from keras.callbacks import EarlyStopping, ModelCheckpoint
 
 #TODO Consider extracting these parameters as function arguments
 
@@ -132,8 +132,10 @@ class VAE():
     #Training the VAE
     def train(self, data, validation_split=0.2):
 
-        #Not part of original code. Consider dropping.
-        earlystop = EarlyStopping(monitor='val_loss', min_delta=0.0001, patience=5, verbose=0, mode='auto')
+        #Specifying when and how to store networks
+        #TODO Allow user to specify folder
+        savefile_path = "models/weights-improvement-{epoch:02d}-{val_acc:.2f}.hdf5"
+        earlystop = ModelCheckpoint(monitor='val_loss', min_delta=0.0001, patience=5, verbose=0, mode='auto')
         callbacks_list = [earlystop]
 
         print("VAE input: ", data.shape)
