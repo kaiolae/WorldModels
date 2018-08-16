@@ -12,10 +12,10 @@ from keras.datasets import cifar10
 
 # Parameters
 img_rows, img_cols, img_chns = 32, 32, 3
-latent_dim = 2
+latent_dim = 3
 intermediate_dim = 128
 epsilon_std = 1.0
-epochs = 15
+epochs = 200
 filters = 32
 num_conv = 3
 batch_size = 256
@@ -161,9 +161,9 @@ _x_decoded_mean_squash = decoder_mean_squash(_x_decoded_relu)
 generator = Model(decoder_input, _x_decoded_mean_squash)
 
 # save all 3 models for future use - especially generator
-vae.save('../models/cifar10_ld_%d_conv_%d_id_%d_e_%d_vae.h5' % (latent_dim, num_conv, intermediate_dim, epochs))
-encoder.save('../models/cifar10_ld_%d_conv_%d_id_%d_e_%d_encoder.h5' % (latent_dim, num_conv, intermediate_dim, epochs))
-generator.save('../models/cifar10_ld_%d_conv_%d_id_%d_e_%d_generator.h5' % (latent_dim, num_conv, intermediate_dim, epochs))
+vae.save('./models/cifar10_ld_%d_conv_%d_id_%d_e_%d_vae.h5' % (latent_dim, num_conv, intermediate_dim, epochs))
+encoder.save('./models/cifar10_ld_%d_conv_%d_id_%d_e_%d_encoder.h5' % (latent_dim, num_conv, intermediate_dim, epochs))
+generator.save('./models/cifar10_ld_%d_conv_%d_id_%d_e_%d_generator.h5' % (latent_dim, num_conv, intermediate_dim, epochs))
 
 # save training history
 fname = '../models/cifar10_ld_%d_conv_%d_id_%d_e_%d_history.pkl' % (latent_dim, num_conv, intermediate_dim, epochs)

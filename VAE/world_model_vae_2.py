@@ -12,7 +12,6 @@ img_rows, img_cols, img_chns = 64, 64, 3
 latent_dim = 64
 intermediate_dim = 512
 epsilon_std = 1.0
-epochs = 15
 filters = 64
 num_conv = 3
 batch_size = 256
@@ -130,11 +129,26 @@ class VAE():
                 self.add_loss(loss, inputs=inputs)
                 return x
 
+
+        # Extra methods just for printing the loss.
+        # Reconstruction loss. Mean squared error between input image and reconstruction.
+        def vae_r_loss(y_true, y_pred):
+            y_true_flat = K.flatten(y_true)
+            y_pred_flat = K.flatten(y_pred)
+            # Mean squared error -same as original paper.
+            return 10 * K.mean(K.square(y_true_flat - y_pred_flat), axis=-1)
+
+        # KL-loss. Ensures the probability distribution modelled by Z behaves nicely.
+        # Follows formula from original paper. Difference from Keras cookbook: There, this loss was multiplied by
+        # -0.0005 instead of -0.5. Weird.
+        def vae_kl_loss(y_true, y_pred):
+            return - 0.5 * K.mean(1 + z_log_var - K.square(z_mean) - K.exp(z_log_var), axis=-1)
+
         y = CustomVariationalLayer()([x, x_decoded_mean_squash])
 
         # entire model
         vae = Model(x, y)
-        vae.compile(optimizer='rmsprop', loss=None)
+        vae.compile(optimizer='rmsprop', loss=None, metrics=[vae_r_loss, vae_kl_loss])
         vae.summary()
 
         #Just the encoder and decoder
@@ -158,11 +172,11 @@ class VAE():
         self.model.load_weights(filepath)
 
     # Training the VAE
-    def train(self, data):
+    def train(self, data, epochs):
 
         print("VAE input: ", data.shape)
 
-        self.model.fit(data, data,
+        return self.model.fit(data,
                        shuffle=True,
                        epochs=epochs,
                        batch_size=batch_size)

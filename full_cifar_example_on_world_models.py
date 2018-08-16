@@ -10,6 +10,14 @@ from keras import backend as K
 from keras import metrics
 from keras.datasets import cifar10
 
+
+import tensorflow as tf
+tf_config = tf.ConfigProto()
+tf_config.gpu_options.allow_growth = True
+sess = tf.Session(config=tf_config)
+from keras import backend as K
+K.set_session(sess)
+
 # Parameters
 img_rows, img_cols, img_chns = 64, 64, 3
 latent_dim = 64
@@ -30,19 +38,19 @@ else:
 
 # encoder architecture
 x = Input(shape=original_img_size)
-conv_1 = Conv2D(64,
-                kernel_size=(5,5),
+conv_1 = Conv2D(32,
+                kernel_size=4,
                 padding='same', activation='relu')(x)
 conv_2 = Conv2D(64,
-                kernel_size=(5,5),
+                kernel_size=4,
                 padding='same', activation='relu',
-                strides=(2, 2))(conv_1)
-conv_3 = Conv2D(32,
-                kernel_size=6,
+                strides=2)(conv_1)
+conv_3 = Conv2D(128,
+                kernel_size=4,
                 padding='same', activation='relu',
                 strides=2)(conv_2)
-conv_4 = Conv2D(3,
-                kernel_size=6,
+conv_4 = Conv2D(256,
+                kernel_size=4,
                 padding='same', activation='relu',
                 strides=2)(conv_3)
 flat = Flatten()(conv_4)
@@ -73,19 +81,19 @@ else:
     output_shape = (batch_size, int(img_rows / 2), int(img_cols / 2), filters)
 
 decoder_reshape = Reshape(output_shape[1:])
-decoder_deconv_1 = Conv2DTranspose(filters,
+decoder_deconv_1 = Conv2DTranspose(128,
                                    kernel_size=5,
                                    padding='same',
                                    strides=2,
                                    activation='relu')
-decoder_deconv_2 = Conv2DTranspose(filters,
+decoder_deconv_2 = Conv2DTranspose(64,
                                    kernel_size=5,
                                    padding='same',
                                    strides=2,
                                    activation='relu')
 decoder_deconv_3_upsamp = Conv2DTranspose(32,
-                                          kernel_size=(6,6),
-                                          strides=(2, 2),
+                                          kernel_size=6,
+                                          strides=2,
                                           padding='valid',
                                           activation='relu')
 decoder_mean_squash = Conv2D(3,
@@ -140,10 +148,13 @@ for d in wm_images:
     if counter != 0:
         wm_images_as_numpy = np.concatenate((wm_images_as_numpy, np.array(d)))
     counter += 1
-wm_images_as_numpy = np.asarray(wm_images)
+wm_images_as_numpy = np.asarray(wm_images_as_numpy)
 print("Shape after load: ", wm_images_as_numpy.shape)
 wm_images_as_numpy = wm_images_as_numpy.astype('float32') / 255.
 wm_images_as_numpy = wm_images_as_numpy.reshape((wm_images_as_numpy.shape[0],) + original_img_size)
+
+#TODO Reducing data size - to avoid mem errors. Find way to avoid that later.
+wm_images_as_numpy = wm_images_as_numpy[:1000] #Only the 1000 first
 
 # training
 history = vae.fit(wm_images_as_numpy,

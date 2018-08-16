@@ -15,7 +15,7 @@ img_rows, img_cols, img_chns = 64, 64, 3
 latent_dim = 64
 intermediate_dim = 512
 epsilon_std = 1.0
-epochs = 15
+epochs = 50
 filters = 64
 num_conv = 3
 batch_size = 256
@@ -130,8 +130,7 @@ vae = Model(x, y)
 vae.compile(optimizer='rmsprop', loss=None)
 vae.summary()
 
-
-# load dataset
+# load World Model data
 
 #TODO Loading just one set of images. Load more later.
 wm_images = np.load('./data/obs_data_doomrnn_1.npy')
@@ -141,10 +140,13 @@ for d in wm_images:
     if counter != 0:
         wm_images_as_numpy = np.concatenate((wm_images_as_numpy, np.array(d)))
     counter += 1
-wm_images_as_numpy = np.asarray(wm_images)
+wm_images_as_numpy = np.asarray(wm_images_as_numpy)
 print("Shape after load: ", wm_images_as_numpy.shape)
 wm_images_as_numpy = wm_images_as_numpy.astype('float32') / 255.
 wm_images_as_numpy = wm_images_as_numpy.reshape((wm_images_as_numpy.shape[0],) + original_img_size)
+
+#TODO Reducing data size - to avoid mem errors. Find way to avoid that later.
+#wm_images_as_numpy = wm_images_as_numpy[:1000] #Only the 1000 first
 
 # training
 history = vae.fit(wm_images_as_numpy,
@@ -168,9 +170,9 @@ _x_decoded_mean_squash = decoder_mean_squash(_x_decoded_relu)
 generator = Model(decoder_input, _x_decoded_mean_squash)
 
 # save all 3 models for future use - especially generator
-vae.save('../models/world_model_vae.h5')
-encoder.save('../models/world_model_encoder.h5')
-generator.save('../models/world_model_decoder.h5')
+vae.save('./models/world_model_vae.h5')
+encoder.save('./models/world_model_encoder.h5')
+generator.save('./models/world_model_decoder.h5')
 
 # save training history
 fname = 'world_model_training_history.h5'
