@@ -155,7 +155,7 @@ class VAE():
             #Testing the trick to limit min value
             kl_tolerance = 0.5
             kl_loss = - 0.5 * K.mean(1 + z_log_var - K.square(z_mean) - K.exp(z_log_var), axis=-1)
-            kl_loss = K.max(kl_loss, kl_tolerance*latent_dim)
+            kl_loss = K.maximum(kl_loss, kl_tolerance*latent_dim)
             return K.mean(kl_loss)
             #return - 0.5 * K.mean(1 + z_log_var - K.square(z_mean) - K.exp(z_log_var), axis=-1)
             #return - 0.5 * K.mean(1 + z_log_var - K.square(z_mean) - K.exp(z_log_var), axis=-1)

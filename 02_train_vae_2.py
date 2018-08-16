@@ -32,8 +32,10 @@ def main(args):
     new_model = args.new_model
     epochs = args.epochs
     save_interval = args.save_interval
-    savefolder = args.savefolder
-
+    if args.savefolder:
+        savefolder = args.savefolder
+    else:
+        savefolder = "./models/"
 
     vae = VAE()
     history = []
@@ -82,7 +84,7 @@ def main(args):
         # TODO Figure out what format to deliver training data in
         #                data = np.array([item for obs in data for item in obs])
         print("Training VAE on data with shape", data_as_numpy.shape)
-        history.append(vae.train(data_as_numpy,epochs, savefolder))
+        history.append(vae.train(data_as_numpy,epochs, save_interval, savefolder))
     else:
         print('no data found for batch number {}'.format(batch_num))
 
