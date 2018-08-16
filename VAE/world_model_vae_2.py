@@ -110,7 +110,7 @@ class VAE():
         x_decoded_mean_squash = decoder_mean_squash(x_decoded_relu)
 
         # Custom loss layer
-        class CustomVariationalLayer(Layer):
+        """class CustomVariationalLayer(Layer):
             def __init__(self, **kwargs):
                 self.is_placeholder = True
                 super(CustomVariationalLayer, self).__init__(**kwargs)
@@ -128,6 +128,9 @@ class VAE():
                 loss = self.vae_loss(x, x_decoded_mean_squash)
                 self.add_loss(loss, inputs=inputs)
                 return x
+                
+            y = CustomVariationalLayer()([x, x_decoded_mean_squash])
+                        """
 
 
         # Extra methods just for printing the loss.
@@ -136,7 +139,7 @@ class VAE():
             y_true_flat = K.flatten(y_true)
             y_pred_flat = K.flatten(y_pred)
             # Mean squared error -same as original paper.
-            return 10 * K.mean(K.square(y_true_flat - y_pred_flat), axis=-1)
+            return img_rows * img_cols * metrics.binary_crossentropy(x, x_decoded_mean_squash)
 
         # KL-loss. Ensures the probability distribution modelled by Z behaves nicely.
         # Follows formula from original paper. Difference from Keras cookbook: There, this loss was multiplied by
@@ -144,11 +147,15 @@ class VAE():
         def vae_kl_loss(y_true, y_pred):
             return - 0.5 * K.mean(1 + z_log_var - K.square(z_mean) - K.exp(z_log_var), axis=-1)
 
-        y = CustomVariationalLayer()([x, x_decoded_mean_squash])
+        #Final loss just sums the two. In Keras, the mean, rather than sum, was used here. Shouldn't make a difference?
+        def vae_loss(y_true, y_pred):
+            return vae_r_loss(y_true, y_pred) + vae_kl_loss(y_true, y_pred)
+
+
 
         # entire model
-        vae = Model(x, y)
-        vae.compile(optimizer='rmsprop', loss=None, metrics=[vae_r_loss, vae_kl_loss])
+        vae = Model(x, x_decoded_mean_squash)
+        vae.compile(optimizer='rmsprop', loss=vae_loss, metrics=[vae_r_loss, vae_kl_loss])
         vae.summary()
 
         #Just the encoder and decoder
