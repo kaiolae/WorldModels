@@ -24,6 +24,8 @@ if K.image_data_format() == 'channels_first':
 else:
     original_img_size = (img_rows, img_cols, img_chns)
 
+BATCH_SIZE = 100
+
 
 def main(args):
 
@@ -84,7 +86,14 @@ def main(args):
         # TODO Figure out what format to deliver training data in
         #                data = np.array([item for obs in data for item in obs])
         print("Training VAE on data with shape", data_as_numpy.shape)
-        history.append(vae.train(data_as_numpy,epochs, save_interval, savefolder))
+        #Training - imitating Ha's way of doing epochs and batches.
+        num_batches = int(np.floor(data_as_numpy.size / BATCH_SIZE))
+        print("Num batches: ", num_batches)
+        for epoch in range(epochs):
+            np.random.shuffle(data_as_numpy)
+            for idx in range(num_batches):
+                batch = data_as_numpy[idx*BATCH_SIZE: (idx+1)*BATCH_SIZE]
+                history.append(vae.train(data_as_numpy,1, save_interval, savefolder))
     else:
         print('no data found for batch number {}'.format(batch_num))
 
