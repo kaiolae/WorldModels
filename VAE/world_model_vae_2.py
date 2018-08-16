@@ -139,7 +139,7 @@ class VAE():
             y_true_flat = K.flatten(y_true)
             y_pred_flat = K.flatten(y_pred)
             # Mean squared error -same as original paper.
-            return img_rows * img_cols * metrics.binary_crossentropy(x, x_decoded_mean_squash)
+            return img_rows * img_cols * metrics.binary_crossentropy(y_true_flat,y_pred_flat)
 
         # KL-loss. Ensures the probability distribution modelled by Z behaves nicely.
         # Follows formula from original paper. Difference from Keras cookbook: There, this loss was multiplied by
