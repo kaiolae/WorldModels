@@ -142,13 +142,17 @@ class VAE():
             y_true_flat = K.flatten(y_true)
             y_pred_flat = K.flatten(y_pred)
             # Mean squared error -same as original paper.
-            return img_rows * img_cols * metrics.binary_crossentropy(x, x_decoded_mean_squash)
+            return K.mean(K.square(y_true_flat - y_pred_flat), axis=-1)
+            #return img_rows * img_cols * metrics.binary_crossentropy(y_true_flat,y_pred_flat)
+
 
         # KL-loss. Ensures the probability distribution modelled by Z behaves nicely.
         # Follows formula from original paper. Difference from Keras cookbook: There, this loss was multiplied by
         # -0.0005 instead of -0.5. Weird.
         def vae_kl_loss(y_true, y_pred):
+            #TODO Hardmaru had some additional trick to limit the max value here...
             return - 0.5 * K.mean(1 + z_log_var - K.square(z_mean) - K.exp(z_log_var), axis=-1)
+            #return - 0.5 * K.mean(1 + z_log_var - K.square(z_mean) - K.exp(z_log_var), axis=-1)
 
         #Final loss just sums the two. In Keras, the mean, rather than sum, was used here. Shouldn't make a difference?
         def vae_loss(y_true, y_pred):
