@@ -91,7 +91,7 @@ def main(args):
             np.random.shuffle(data_as_numpy)
             for idx in range(num_batches):
                 batch = data_as_numpy[idx*BATCH_SIZE: (idx+1)*BATCH_SIZE]
-                history.append(vae.train(data_as_numpy,1, save_interval, savefolder))
+                history.append(vae.train(batch,1, save_interval, savefolder))
     else:
         print('no data found for batch number {}'.format(batch_num))
 
