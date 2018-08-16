@@ -40,10 +40,10 @@ def main(args):
         except:
             print("Either set --new_model or ensure ./vae/weights.h5 exists")
             raise
+    first_item = True
 
     for batch_num in range(start_batch, max_batch + 1):
         print('Building batch {}...'.format(batch_num))
-        first_item = True
 
         for env_name in config.train_envs:
             print("Loading data from ", './data/obs_data_' + env_name + '_' + str(batch_num) + '.npy')
@@ -51,9 +51,11 @@ def main(args):
                 new_data = np.load('./data/obs_data_' + env_name + '_' + str(batch_num) + '.npy')
                 print("Shape after load: ", new_data.shape)
                 if first_item:
+                    print("Initializing data")
                     data = new_data
                     first_item = False
                 else:
+                    print("concatenating")
                     data = np.concatenate([data, new_data])
                     print("Shape after concat: ", data.shape)
                 print('Found {}...current data size = {} episodes'.format(env_name, len(data)))
@@ -76,7 +78,7 @@ def main(args):
         # TODO Figure out what format to deliver training data in
         #                data = np.array([item for obs in data for item in obs])
         print("Training VAE on data with shape", data_as_numpy.shape)
-        history.append(vae.train(data_as_numpy))
+        history.append(vae.train(data_as_numpy,epochs))
     else:
         print('no data found for batch number {}'.format(batch_num))
 
