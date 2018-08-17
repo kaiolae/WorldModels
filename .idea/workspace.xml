@@ -2,10 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d2e15954-9e0c-499c-a594-76f0b58e01fe" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/03_train_vae_3.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/VAE/world_model_vae_4.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/VAE/world_model_vae_3.py" beforeDir="false" afterPath="$PROJECT_DIR$/VAE/world_model_vae_3.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/02_train_vae_2.py" beforeDir="false" afterPath="$PROJECT_DIR$/02_train_vae_2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/03_train_vae_3.py" beforeDir="false" afterPath="$PROJECT_DIR$/03_train_vae_3.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/VAE/world_model_vae_4.py" beforeDir="false" afterPath="$PROJECT_DIR$/VAE/world_model_vae_4.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -17,36 +18,35 @@
     <session id="1629558025">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="4" />
+          <entry key="project.closed" value="3" />
           <entry key="project.open.time.1" value="2" />
           <entry key="project.open.time.12" value="1" />
           <entry key="project.open.time.18" value="1" />
           <entry key="project.open.time.2" value="2" />
-          <entry key="project.open.time.4" value="1" />
-          <entry key="project.opened" value="7" />
+          <entry key="project.opened" value="6" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="Python Console" value="3" />
           <entry key="dummy" value="3" />
-          <entry key="py" value="6536" />
+          <entry key="py" value="6485" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="PLAIN_TEXT" value="3" />
-          <entry key="Python" value="6539" />
+          <entry key="Python" value="6488" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="py" value="33" />
+          <entry key="py" value="31" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="Python" value="33" />
+          <entry key="Python" value="31" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.js.language.service.starts" />
@@ -54,28 +54,30 @@
     <session id="-2045742024">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
+          <entry key="project.closed" value="1" />
           <entry key="project.open.time.2" value="1" />
-          <entry key="project.opened" value="1" />
+          <entry key="project.open.time.4" value="1" />
+          <entry key="project.opened" value="2" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="py" value="1" />
+          <entry key="py" value="4" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="Python" value="1" />
+          <entry key="Python" value="4" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="508" />
+          <entry key="py" value="950" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="508" />
+          <entry key="Python" value="950" />
         </counts>
       </usages-collector>
     </session>
@@ -83,10 +85,10 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/VAE/world_model_vae_3.py">
+        <entry file="file://$PROJECT_DIR$/VAE/world_model_vae_2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="872">
-              <caret line="167" selection-start-line="167" selection-end-line="197" selection-end-column="29" />
+            <state relative-caret-position="318">
+              <caret line="74" column="8" selection-start-line="74" selection-start-column="8" selection-end-line="74" selection-end-column="8" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -94,11 +96,23 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/VAE/world_model_vae_3.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="131">
+              <caret line="129" column="43" selection-start-line="129" selection-start-column="43" selection-end-line="129" selection-end-column="43" />
+              <folding>
+                <element signature="e#0#9#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/03_train_vae_3.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="377">
-              <caret line="76" column="16" selection-start-line="76" selection-start-column="16" selection-end-line="76" selection-end-column="16" />
+            <state relative-caret-position="534">
+              <caret line="85" column="55" selection-start-line="85" selection-start-column="55" selection-end-line="85" selection-end-column="55" />
               <folding>
                 <element signature="e#37#46#0" expanded="true" />
               </folding>
@@ -106,20 +120,15 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/VAE/world_model_vae_4.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="75">
-              <caret line="5" column="39" selection-start-line="5" selection-start-column="39" selection-end-line="5" selection-end-column="39" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file:///usr/local/lib/python3.5/dist-packages/keras/backend/tensorflow_backend.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="548">
-              <caret line="1231" column="4" selection-start-line="1231" selection-start-column="4" selection-end-line="1231" selection-end-column="4" />
+            <state relative-caret-position="240">
+              <caret line="121" column="58" lean-forward="true" selection-start-line="121" selection-start-column="58" selection-end-line="121" selection-end-column="58" />
+              <folding>
+                <element signature="e#0#9#0" expanded="true" />
+                <marker date="1534517847333" expanded="true" signature="5794:5800" ph="..." />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -127,8 +136,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/02_train_vae_2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="631">
-              <caret line="98" lean-forward="true" selection-start-line="26" selection-end-line="98" />
+            <state relative-caret-position="625">
+              <caret line="104" selection-start-line="104" selection-end-line="104" />
               <folding>
                 <element signature="e#37#46#0" expanded="true" />
               </folding>
@@ -139,7 +148,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file:///usr/local/lib/python3.5/dist-packages/keras/engine/base_layer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="6210">
+            <state relative-caret-position="6225">
               <caret line="430" selection-start-line="430" selection-end-line="430" />
             </state>
           </provider>
@@ -148,7 +157,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file:///usr/local/lib/python3.5/dist-packages/keras/engine/training.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4575">
+            <state relative-caret-position="4605">
               <caret line="332" selection-start-line="332" selection-end-line="332" />
             </state>
           </provider>
@@ -169,8 +178,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/02_train_vae.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="825">
-              <caret line="64" selection-start-line="64" selection-end-line="70" selection-end-column="76" />
+            <state relative-caret-position="1245">
+              <caret line="86" selection-start-line="86" selection-end-line="86" />
               <folding>
                 <element signature="e#38#73#0" expanded="true" />
               </folding>
@@ -182,7 +191,7 @@
         <entry file="file://$PROJECT_DIR$/config.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="15">
-              <caret line="1" column="21" selection-start-line="1" selection-start-column="21" selection-end-line="1" selection-end-column="21" />
+              <caret line="1" column="20" selection-start-line="1" selection-start-column="20" selection-end-line="1" selection-end-column="20" />
             </state>
           </provider>
         </entry>
@@ -198,9 +207,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>config</find>
-      <find>tf.</find>
-      <find>ge</find>
       <find>generate_latent_</find>
       <find>validation</find>
       <find>resha</find>
@@ -209,6 +215,7 @@
       <find>cifar100</find>
       <find>32</find>
       <find>self</find>
+      <find>Model</find>
       <find>input</find>
       <find>num_conv</find>
       <find>original</find>
@@ -217,17 +224,19 @@
       <find>fit</find>
       <find>epochs</find>
       <find>compile</find>
+      <find>epoch</find>
       <find>callback</find>
       <find>ear</find>
       <find>batch</find>
       <find>256</find>
       <find>batch_si</find>
-      <find>image</find>
-      <find>epoch</find>
       <find>train(</find>
-      <find>model</find>
       <find>kl_to</find>
-      <find>Model</find>
+      <find>image</find>
+      <find>generate_latent</find>
+      <find>self.enco</find>
+      <find>save</find>
+      <find>vae_enco</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -251,9 +260,9 @@
         <option value="$PROJECT_DIR$/VAE/world_model_vae.py" />
         <option value="$PROJECT_DIR$/VAE/world_model_vae_2.py" />
         <option value="$PROJECT_DIR$/02_train_vae_2.py" />
-        <option value="$PROJECT_DIR$/03_train_vae_3.py" />
         <option value="$PROJECT_DIR$/VAE/world_model_vae_3.py" />
         <option value="$PROJECT_DIR$/VAE/world_model_vae_4.py" />
+        <option value="$PROJECT_DIR$/03_train_vae_3.py" />
       </list>
     </option>
   </component>
@@ -264,9 +273,9 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds" extendedState="4">
-    <option name="x" value="1316" />
+    <option name="x" value="75" />
     <option name="y" value="24" />
-    <option name="width" value="1244" />
+    <option name="width" value="1248" />
     <option name="height" value="1416" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -275,34 +284,29 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
             <path>
-              <item name="world_models" type="b2602c69:ProjectViewProjectNode" />
-              <item name="world_models" type="462c0819:PsiDirectoryNode" />
+              <item name="WorldModels" type="b2602c69:ProjectViewProjectNode" />
+              <item name="WorldModels" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="world_models" type="b2602c69:ProjectViewProjectNode" />
-              <item name="world_models" type="462c0819:PsiDirectoryNode" />
+              <item name="WorldModels" type="b2602c69:ProjectViewProjectNode" />
+              <item name="WorldModels" type="462c0819:PsiDirectoryNode" />
               <item name="VAE" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="world_models" type="b2602c69:ProjectViewProjectNode" />
-              <item name="world_models" type="462c0819:PsiDirectoryNode" />
-              <item name="vae" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
       <pane id="Course" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$USER_HOME$" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
@@ -325,7 +329,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.full_cifar_example_on_world_models">
+  <component name="RunManager" selected="Python.02_train_vae_2">
     <configuration name="02_train_vae" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="world_models" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -340,6 +344,25 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/02_train_vae.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="true" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="02_train_vae_2" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="world_models" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/02_train_vae_2.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="true" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -441,9 +464,11 @@
       <item itemvalue="Python.02_train_vae" />
       <item itemvalue="Python.full_cifar_example" />
       <item itemvalue="Python.full_cifar_example_on_world_models" />
+      <item itemvalue="Python.02_train_vae_2" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.02_train_vae_2" />
         <item itemvalue="Python.full_cifar_example_on_world_models" />
         <item itemvalue="Python.full_cifar_example" />
         <item itemvalue="Python.test_on_cifar" />
@@ -465,10 +490,9 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1316" y="24" width="1244" height="1416" extended-state="4" />
-    <editor active="true" />
+    <frame x="75" y="24" width="1248" height="1416" extended-state="4" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2612688" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2555102" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -481,14 +505,14 @@
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="8" />
       <window_info anchor="bottom" id="Database Changes" order="9" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.50083196" side_tool="true" weight="0.1878882" />
+      <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
       <window_info anchor="bottom" id="Terminal" order="11" />
-      <window_info anchor="bottom" id="Python Console" order="12" sideWeight="0.49916804" visible="true" weight="0.1878882" />
+      <window_info anchor="bottom" id="Python Console" order="12" visible="true" weight="0.18768997" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="SciView" order="3" />
-      <window_info anchor="right" x="0" y="0" width="262" height="1216" id="Documentation" order="4" side_tool="true" visible="true" weight="0.02754591" />
+      <window_info anchor="right" x="0" y="0" width="262" height="1216" id="Documentation" order="4" side_tool="true" visible="true" weight="0.027454242" />
       <window_info anchor="right" id="Database" order="5" />
     </layout>
   </component>
@@ -500,13 +524,7 @@
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/../WorldModels_hardmaru/doomrnn/extract.py" />
-    <entry file="file:///usr/local/lib/python3.5/dist-packages/pip/_vendor/chardet/latin1prober.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="338">
-          <caret line="102" column="8" selection-start-line="102" selection-start-column="8" selection-end-line="102" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file:///usr/local/lib/python3.5/dist-packages/pip/_vendor/chardet/latin1prober.py" />
     <entry file="file://$PROJECT_DIR$/env.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="315">
@@ -560,9 +578,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2070">
           <caret line="144" selection-start-line="144" selection-end-line="144" />
-          <folding>
-            <element signature="e#133#151#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -577,9 +592,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2115">
           <caret line="151" column="17" selection-start-line="151" selection-start-column="17" selection-end-line="151" selection-end-column="17" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -597,44 +609,34 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/.PyCharm2018.2/system/python_stubs/-1247971764/builtins.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="338">
-          <caret line="297" column="4" selection-start-line="297" selection-start-column="4" selection-end-line="297" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$USER_HOME$/.PyCharm2018.2/system/python_stubs/-1247971764/builtins.py" />
     <entry file="file://$PROJECT_DIR$/VAE/world_model_vae.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2100">
-          <caret line="145" column="38" selection-start-line="145" selection-start-column="38" selection-end-line="145" selection-end-column="38" />
+        <state relative-caret-position="1800">
+          <caret line="125" column="38" selection-start-line="125" selection-start-column="38" selection-end-line="125" selection-end-column="38" />
           <folding>
             <element signature="e#133#151#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/VAE/world_model_vae_2.py">
+    <entry file="file:///usr/local/lib/python3.5/dist-packages/keras/backend/tensorflow_backend.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
-          <caret line="23" column="4" selection-start-line="23" selection-start-column="4" selection-end-line="23" selection-end-column="4" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-            <marker date="1534492503041" expanded="true" signature="6347:6360" ph="..." />
-          </folding>
+        <state relative-caret-position="18090">
+          <caret line="1231" column="4" selection-start-line="1231" selection-start-column="4" selection-end-line="1231" selection-end-column="4" />
         </state>
       </provider>
     </entry>
     <entry file="file:///usr/local/lib/python3.5/dist-packages/keras/engine/base_layer.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6210">
+        <state relative-caret-position="6225">
           <caret line="430" selection-start-line="430" selection-end-line="430" />
         </state>
       </provider>
     </entry>
     <entry file="file:///usr/local/lib/python3.5/dist-packages/keras/engine/training.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4575">
+        <state relative-caret-position="4605">
           <caret line="332" selection-start-line="332" selection-end-line="332" />
         </state>
       </provider>
@@ -651,8 +653,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/02_train_vae.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="825">
-          <caret line="64" selection-start-line="64" selection-end-line="70" selection-end-column="76" />
+        <state relative-caret-position="1245">
+          <caret line="86" selection-start-line="86" selection-end-line="86" />
           <folding>
             <element signature="e#38#73#0" expanded="true" />
           </folding>
@@ -662,21 +664,24 @@
     <entry file="file://$PROJECT_DIR$/config.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="15">
-          <caret line="1" column="21" selection-start-line="1" selection-start-column="21" selection-end-line="1" selection-end-column="21" />
+          <caret line="1" column="20" selection-start-line="1" selection-start-column="20" selection-end-line="1" selection-end-column="20" />
         </state>
       </provider>
     </entry>
-    <entry file="file:///usr/local/lib/python3.5/dist-packages/keras/backend/tensorflow_backend.py">
+    <entry file="file://$PROJECT_DIR$/VAE/world_model_vae_2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="548">
-          <caret line="1231" column="4" selection-start-line="1231" selection-start-column="4" selection-end-line="1231" selection-end-column="4" />
+        <state relative-caret-position="318">
+          <caret line="74" column="8" selection-start-line="74" selection-start-column="8" selection-end-line="74" selection-end-column="8" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/02_train_vae_2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="631">
-          <caret line="98" lean-forward="true" selection-start-line="26" selection-end-line="98" />
+        <state relative-caret-position="625">
+          <caret line="104" selection-start-line="104" selection-end-line="104" />
           <folding>
             <element signature="e#37#46#0" expanded="true" />
           </folding>
@@ -685,27 +690,31 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/VAE/world_model_vae_3.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="872">
-          <caret line="167" selection-start-line="167" selection-end-line="197" selection-end-column="29" />
+        <state relative-caret-position="131">
+          <caret line="129" column="43" selection-start-line="129" selection-start-column="43" selection-end-line="129" selection-end-column="43" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/VAE/world_model_vae_4.py">
+    <entry file="file://$PROJECT_DIR$/03_train_vae_3.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="5" column="39" selection-start-line="5" selection-start-column="39" selection-end-line="5" selection-end-column="39" />
+        <state relative-caret-position="534">
+          <caret line="85" column="55" selection-start-line="85" selection-start-column="55" selection-end-line="85" selection-end-column="55" />
+          <folding>
+            <element signature="e#37#46#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/03_train_vae_3.py">
+    <entry file="file://$PROJECT_DIR$/VAE/world_model_vae_4.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="377">
-          <caret line="76" column="16" selection-start-line="76" selection-start-column="16" selection-end-line="76" selection-end-column="16" />
+        <state relative-caret-position="240">
+          <caret line="121" column="58" lean-forward="true" selection-start-line="121" selection-start-column="58" selection-end-line="121" selection-end-column="58" />
           <folding>
-            <element signature="e#37#46#0" expanded="true" />
+            <element signature="e#0#9#0" expanded="true" />
+            <marker date="1534517847333" expanded="true" signature="5794:5800" ph="..." />
           </folding>
         </state>
       </provider>

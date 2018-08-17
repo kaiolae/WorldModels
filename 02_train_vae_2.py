@@ -7,6 +7,8 @@ import numpy as np
 import config
 import pickle
 
+import matplotlib.pyplot as plt
+
 # Only for GPU use:
 #import os
 #os.environ["CUDA_VISIBLE_DEVICES"]="0"
@@ -85,6 +87,9 @@ def main(args):
         # TODO Figure out what format to deliver training data in
         #                data = np.array([item for obs in data for item in obs])
         print("Training VAE on data with shape", data_as_numpy.shape)
+        plt.imshow(data_as_numpy[0])
+        print("imshow")
+        plt.plot()
 
         history.append(vae.train(data_as_numpy,epochs, save_interval, savefolder))
     else:

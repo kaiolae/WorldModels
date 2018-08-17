@@ -19,7 +19,6 @@ from keras import backend as K
 K.set_session(sess)
 
 
-
 def main(args):
 
     start_batch = args.start_batch
@@ -74,7 +73,7 @@ def main(args):
         data_as_numpy = np.asarray(data_as_numpy)
 
         data_as_numpy = data_as_numpy.astype('float32') / 255.
-        data_as_numpy = data_as_numpy.reshape((data_as_numpy.shape[0],) + original_img_size)
+        #data_as_numpy = data_as_numpy.reshape((data_as_numpy.shape[0],) + original_img_size)
         print("data shape: ", data_as_numpy.shape)
         # TODO Figure out what format to deliver training data in
         #                data = np.array([item for obs in data for item in obs])
@@ -84,7 +83,7 @@ def main(args):
     else:
         print('no data found for batch number {}'.format(batch_num))
 
-    vae.save_weights(os.path.join(savefolder,'final_weights.h5'))
+    vae.save_weights(os.path.join(savefolder,'final_'))
 
     # save training history
     fname = os.path.join(savefolder,'world_model_training_history.h5')

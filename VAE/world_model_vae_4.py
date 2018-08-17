@@ -137,28 +137,17 @@ class VAE():
         # decoder_input = Input(shape=(latent_dim,))
         # _h_decoded = decoder_h(decoder_input)
         # _x_decoded_mean = decoder_mean(_h_decoded)
-        INPUT_DIM = (64, 64, 3)
-
-        CONV_FILTERS = [32, 64, 64, 128]
-        CONV_KERNEL_SIZES = [4, 4, 4, 4]
-        CONV_STRIDES = [2, 2, 2, 2]
-        CONV_ACTIVATIONS = ['relu', 'relu', 'relu', 'relu']
-
-        DENSE_SIZE = 1024
-
-        CONV_T_FILTERS = [64, 64, 32, 3]
-        CONV_T_KERNEL_SIZES = [5, 5, 6, 6]
-        CONV_T_STRIDES = [2, 2, 2, 2]
-        CONV_T_ACTIVATIONS = ['relu', 'relu', 'relu', 'sigmoid']
-
-        Z_DIM = 32
-
-        EPOCHS = 1
-        BATCH_SIZE = 32  # generator = Model(decoder_input, _x_decoded_mean)
+        return (vae, encoder, decoder)
 
     # Loading weights from file
     def set_weights(self, filepath):
         self.model.load_weights(filepath)
+
+    def load_encoder_weights(self,filepath):
+        self.encoder.load_weights(filepath)
+
+    def load_decoder_weights(self,filepath):
+        self.decoder.load_weights(filepath)
 
     # Training the VAE
     def train(self, data, epochs, save_interval=0, savefolder = "./models/"):
@@ -183,7 +172,9 @@ class VAE():
                        callbacks=callbacks_list)
 
     def save_weights(self, filepath):
-        self.model.save_weights(filepath)
+        self.model.save_weights(filepath+"full_vae_weights.h5")
+        self.encoder.save_weights(filepath+"encoder_only_weights.h5")
+        self.decoder.save_weights(filepath+"decoder_only_weights.h5")
         #TODO Consider if we have to save encoder/decoder too.
 
     # Kept from the old code. Consider if it can be better to have this elsewhere.
