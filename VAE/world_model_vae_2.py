@@ -12,8 +12,8 @@ from keras.datasets import cifar10
 
 # Parameters - TODO abstract
 img_rows, img_cols, img_chns = 64, 64, 3
-latent_dim = 64
-intermediate_dim = 512
+latent_dim = 32
+intermediate_dim = 128
 epsilon_std = 1.0
 filters = 64
 num_conv = 3

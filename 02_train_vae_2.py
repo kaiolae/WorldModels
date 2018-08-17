@@ -1,7 +1,7 @@
 # python 02_train_vae.py --new_model
 import os
 
-from VAE.world_model_vae_2 import VAE
+from VAE.world_model_vae_3 import VAE
 import argparse
 import numpy as np
 import config
