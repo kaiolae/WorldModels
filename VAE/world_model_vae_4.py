@@ -12,21 +12,18 @@ from keras.datasets import cifar10
 from keras import layers
 import keras
 
-# Parameters - TODO abstract
 img_rows, img_cols, img_chns = 64, 64, 3
 latent_dim = 16
 intermediate_dim = 128
 epsilon_std = 1.0
+epochs = 50
 filters = 32
 num_conv = 3
 batch_size = 256
-# tensorflow uses channels_last
-# theano uses channels_first
-if K.image_data_format() == 'channels_first':
-    original_img_size = (img_chns, img_rows, img_cols)
-else:
-    original_img_size = (img_rows, img_cols, img_chns)
-#Trying to imitate Charles' code.
+
+img_size = (img_rows, img_cols, img_chns)
+original_dim = img_rows * img_cols * img_chns
+
 
 class VAE():
 
@@ -42,12 +39,12 @@ class VAE():
         print("VAE init done")
 
     def _build(self):
-
         # Enc
-        input_img = Input(shape=(img_rows, img_cols, img_chns), name='encoder_input')
+        input_img = Input(shape=img_size, name='encoder_input')
         x = Conv2D(img_chns, kernel_size=(2, 2), padding='same', activation='relu')(input_img)
         x = Conv2D(filters, kernel_size=(2, 2), padding='same', activation='relu', strides=(2, 2))(x)
-        x = Conv2D(filters, kernel_size=num_conv, padding='same', activation='relu', strides=1)(x)
+        x = Conv2D(filters, kernel_size=(2, 2), padding='same', activation='relu', strides=(2, 2))(x)
+        # x = keras.layers.MaxPooling2D(pool_size=(2, 2), strides=None, padding='same')(x) # try a max pooling layer here instead of the previous stride
         x = Conv2D(filters, kernel_size=num_conv, padding='same', activation='relu', strides=1)(x)
         shape_before_flattening = K.int_shape(x)
         x = Flatten()(x)
@@ -77,7 +74,7 @@ class VAE():
         y = Reshape(shape_before_flattening[1:])(y)
         y = Conv2DTranspose(filters, kernel_size=num_conv, padding='same', strides=1, activation='relu',
                             name='deconv_1')(y)  # deconv 1
-        y = Conv2DTranspose(filters, kernel_size=num_conv, padding='same', strides=1, activation='relu',
+        y = Conv2DTranspose(filters, kernel_size=num_conv, padding='same', strides=(2, 2), activation='relu',
                             name='deconv_2')(y)  # deconv 2
         y = Conv2DTranspose(filters, kernel_size=(3, 3), strides=(2, 2), padding='valid', activation='relu',
                             name='deconv_3')(y)  # deconv 3, upsamp
@@ -103,7 +100,7 @@ class VAE():
             def vae_loss(self, x, z_decoded):
                 x = K.flatten(x)
                 z_decoded = K.flatten(z_decoded)
-                r_loss = img_rows * img_cols * img_chns * xent(x, z_decoded)
+                r_loss = original_dim * xent(x, z_decoded)
                 kl_loss = kl_measure(z_mean, z_log_var)
                 print("KL Shape:", K.int_shape(kl_loss))
                 print("Xent shape:", K.int_shape(r_loss))
@@ -120,23 +117,44 @@ class VAE():
 
         vae = Model(input_img, y, name="VAE")
         vae.compile(optimizer='adam', metrics=['mse', 'binary_crossentropy'])
+
+        # def vae_loss(y_true, y_pred):
+        #     loss_r = original_dim * xent(y_true, y_pred)
+        #     loss_kl = kl_measure(z_mean, z_log_var)
+        #     return K.mean(loss_r + loss_kl)
+
+        # end-to-end autoencoder
+        # vae = Model(input_img, z_decoded, name="VAE")
+        # vae.add_loss(vae_loss)
+        # vae.compile(optimizer='adam')
+
         vae.summary()
 
-        #Just the encoder and decoder
-        #vae_encoder = Model(x,z)
+        # # encoder, from inputs to latent space
+        # encoder = Model(x, z_mean)
 
-        #Building a separate decoder
-        #vae_z_input = Input(shape=(latent_dim,))
-        #decoded = decoder_hid(vae_z_input)
-        #decoded = decoder_upsample(decoded)
-        #decoded = decoder_reshape(decoded)
-        #decoded = decoder_deconv_1(decoded)
-        #decoded = decoder_deconv_2(decoded)
-        #decoded = decoder_deconv_3_upsamp(decoded)
-        #decoded = decoder_mean_squash(decoded)
-        #vae_decoder = Model(vae_z_input, decoded)
+        # # generator, from latent space to reconstructed inputs
+        # decoder_input = Input(shape=(latent_dim,))
+        # _h_decoded = decoder_h(decoder_input)
+        # _x_decoded_mean = decoder_mean(_h_decoded)
+        INPUT_DIM = (64, 64, 3)
 
-        return (vae, vae_encoder, None)
+        CONV_FILTERS = [32, 64, 64, 128]
+        CONV_KERNEL_SIZES = [4, 4, 4, 4]
+        CONV_STRIDES = [2, 2, 2, 2]
+        CONV_ACTIVATIONS = ['relu', 'relu', 'relu', 'relu']
+
+        DENSE_SIZE = 1024
+
+        CONV_T_FILTERS = [64, 64, 32, 3]
+        CONV_T_KERNEL_SIZES = [5, 5, 6, 6]
+        CONV_T_STRIDES = [2, 2, 2, 2]
+        CONV_T_ACTIVATIONS = ['relu', 'relu', 'relu', 'sigmoid']
+
+        Z_DIM = 32
+
+        EPOCHS = 1
+        BATCH_SIZE = 32  # generator = Model(decoder_input, _x_decoded_mean)
 
     # Loading weights from file
     def set_weights(self, filepath):
@@ -158,12 +176,11 @@ class VAE():
             callbacks_list=[]
 
 
-        return self.model.fit(data, data,
+        return self.model.fit(data,
                        shuffle=True,
                        epochs=epochs,
                        batch_size=batch_size,
                        callbacks=callbacks_list)
-
 
     def save_weights(self, filepath):
         self.model.save_weights(filepath)
