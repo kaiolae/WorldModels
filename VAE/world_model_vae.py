@@ -1,159 +1,183 @@
-#Much of this is from https://medium.com/applied-data-science/how-to-build-your-own-world-model-using-python-and-keras-64fb388ba459
+import os
 
 import numpy as np
+from keras.callbacks import ModelCheckpoint
 
-from keras.layers import Input, Conv2D, Flatten, Dense, Conv2DTranspose, Lambda, Reshape
+from keras.layers import Input, Dense, Lambda, Flatten, Reshape, Layer
+from keras.layers import Conv2D, Conv2DTranspose
 from keras.models import Model
 from keras import backend as K
-from keras.callbacks import EarlyStopping, ModelCheckpoint
+from keras import metrics
+from keras.datasets import cifar10
+from keras import layers
+import keras
 
-#TODO Consider extracting these parameters as function arguments
+img_rows, img_cols, img_chns = 64, 64, 3
+latent_dim = 16
+intermediate_dim = 128
+epsilon_std = 1.0
+epochs = 50
+filters = 32
+num_conv = 3
+batch_size = 256
 
-#Tried to make these parameters match the original World Models paper.
+img_size = (img_rows, img_cols, img_chns)
+original_dim = img_rows * img_cols * img_chns
 
-INPUT_DIM = (32,32,3)
-#INPUT_DIM = (64,64,3)
-
-#Encoding parameters
-CONV_FILTERS = [32,64,64,128]
-CONV_KERNEL_SIZES = [4,4,4,4]
-CONV_STRIDES = [2,2,2,2]
-CONV_ACTIVATIONS = ['relu','relu','relu','relu']
-
-DENSE_SIZE = 1024
-
-#Decoding parameters
-CONV_T_FILTERS = [64,64,32,3]
-CONV_T_KERNEL_SIZES = [5,5,6,6]
-CONV_T_STRIDES = [2,2,2,2]
-CONV_T_ACTIVATIONS = ['relu','relu','relu','sigmoid']
-
-Z_DIM = 64 #Dimensions in latent space
-
-#Training parameters
-EPOCHS = 1
-BATCH_SIZE = 100
-
-
-#Samples z-values, given the vectors of means and deviations.
-def sampling(args):
-    z_mean, z_log_var = args
-    epsilon = K.random_normal(shape=(K.shape(z_mean)[0], Z_DIM), mean=0.,stddev=1.)
-    return z_mean + K.exp(z_log_var / 2) * epsilon
 
 class VAE():
 
     def __init__(self):
         print("VAE init")
         self.models = self._build()
-        self.model = self.models[0]
+        self.model = self.models[0] #The full VAE model
         self.encoder = self.models[1]
         self.decoder = self.models[2]
 
-        self.input_dim = INPUT_DIM
-        self.z_dim = Z_DIM
+        self.input_dim = (img_rows, img_cols, img_chns)
+        self.z_dim = latent_dim
         print("VAE init done")
 
-
     def _build(self):
+        # Enc
+        input_img = Input(shape=img_size, name='encoder_input')
+        x = Conv2D(img_chns, kernel_size=(2, 2), padding='same', activation='relu')(input_img)
+        x = Conv2D(filters, kernel_size=(2, 2), padding='same', activation='relu', strides=(2, 2))(x)
+        x = Conv2D(filters, kernel_size=(2, 2), padding='same', activation='relu', strides=(2, 2))(x)
+        # x = keras.layers.MaxPooling2D(pool_size=(2, 2), strides=None, padding='same')(x) # try a max pooling layer here instead of the previous stride
+        x = Conv2D(filters, kernel_size=num_conv, padding='same', activation='relu', strides=1)(x)
+        shape_before_flattening = K.int_shape(x)
+        x = Flatten()(x)
+        x = Dense(intermediate_dim, activation='relu', name='latent_project')(x)
 
-        vae_x = Input(shape=INPUT_DIM)
-        vae_c1 = Conv2D(filters = CONV_FILTERS[0], kernel_size = CONV_KERNEL_SIZES[0], strides = CONV_STRIDES[0], activation=CONV_ACTIVATIONS[0])(vae_x)
-        vae_c2 = Conv2D(filters = CONV_FILTERS[1], kernel_size = CONV_KERNEL_SIZES[1], strides = CONV_STRIDES[1], activation=CONV_ACTIVATIONS[0])(vae_c1)
-        vae_c3= Conv2D(filters = CONV_FILTERS[2], kernel_size = CONV_KERNEL_SIZES[2], strides = CONV_STRIDES[2], activation=CONV_ACTIVATIONS[0])(vae_c2)
-        vae_c4= Conv2D(filters = CONV_FILTERS[3], kernel_size = CONV_KERNEL_SIZES[3], strides = CONV_STRIDES[3], activation=CONV_ACTIVATIONS[0])(vae_c3)
+        print("Shape before flattening:", shape_before_flattening)
 
-        vae_z_in = Flatten()(vae_c4)
+        # mean and var
+        z_mean = Dense(latent_dim, name='Z_mean')(x)
+        z_log_var = Dense(latent_dim, name='Z_var')(x)
 
-        vae_z_mean = Dense(Z_DIM)(vae_z_in)
-        vae_z_log_var = Dense(Z_DIM)(vae_z_in)
+        # make an encoder model (not used until after training)
+        encoder = Model(input_img, z_mean)
 
-        vae_z = Lambda(sampling)([vae_z_mean, vae_z_log_var])
-        vae_z_input = Input(shape=(Z_DIM,))
+        # sampling layer
+        def sampling(args):
+            z_mean, z_log_var = args
+            epsilon = K.random_normal(shape=(K.shape(z_mean)[0], latent_dim), mean=0., stddev=1.)
+            return z_mean + K.exp(z_log_var) * epsilon
 
-        # we instantiate these layers separately so as to reuse them later
-        vae_dense = Dense(1024)
-        vae_dense_model = vae_dense(vae_z)
+        z = layers.Lambda(sampling, name="Z_sample")([z_mean, z_log_var])
 
-        vae_z_out = Reshape((1,1,DENSE_SIZE))
-        vae_z_out_model = vae_z_out(vae_dense_model)
+        # dec
+        decoder_input = layers.Input(K.int_shape(z)[1:])
+        y = Dense(intermediate_dim, activation='relu')(decoder_input)  # (z)
+        y = Dense(np.prod(shape_before_flattening[1:]), activation='relu')(y)
+        y = Reshape(shape_before_flattening[1:])(y)
+        y = Conv2DTranspose(filters, kernel_size=num_conv, padding='same', strides=1, activation='relu',
+                            name='deconv_1')(y)  # deconv 1
+        y = Conv2DTranspose(filters, kernel_size=num_conv, padding='same', strides=(2, 2), activation='relu',
+                            name='deconv_2')(y)  # deconv 2
+        y = Conv2DTranspose(filters, kernel_size=(3, 3), strides=(2, 2), padding='valid', activation='relu',
+                            name='deconv_3')(y)  # deconv 3, upsamp
+        y = Conv2D(img_chns, kernel_size=2, padding='valid', activation='sigmoid', name="mean_squash")(y)  # mean squash
+        decoder = Model(decoder_input, y, name="Decoder")
+        z_decoded = decoder(z)  # y
 
-        vae_d1 = Conv2DTranspose(filters = CONV_T_FILTERS[0], kernel_size = CONV_T_KERNEL_SIZES[0] , strides = CONV_T_STRIDES[0], activation=CONV_T_ACTIVATIONS[0])
-        vae_d1_model = vae_d1(vae_z_out_model)
-        vae_d2 = Conv2DTranspose(filters = CONV_T_FILTERS[1], kernel_size = CONV_T_KERNEL_SIZES[1] , strides = CONV_T_STRIDES[1], activation=CONV_T_ACTIVATIONS[1])
-        vae_d2_model = vae_d2(vae_d1_model)
-        vae_d3 = Conv2DTranspose(filters = CONV_T_FILTERS[2], kernel_size = CONV_T_KERNEL_SIZES[2] , strides = CONV_T_STRIDES[2], activation=CONV_T_ACTIVATIONS[2])
-        vae_d3_model = vae_d3(vae_d2_model)
-        vae_d4 = Conv2DTranspose(filters = CONV_T_FILTERS[3], kernel_size = CONV_T_KERNEL_SIZES[3] , strides = CONV_T_STRIDES[3], activation=CONV_T_ACTIVATIONS[3])
-        vae_d4_model = vae_d4(vae_d3_model)
+        def xent(y_true, y_pred):
+            return keras.metrics.binary_crossentropy(y_true, y_pred)
 
-        #### DECODER ONLY
+        def kl_measure(loc, log_var):
+            return -0.5 * K.mean(1 + log_var - K.square(loc) - K.exp(log_var), axis=-1)
 
-        vae_dense_decoder = vae_dense(vae_z_input)
-        vae_z_out_decoder = vae_z_out(vae_dense_decoder)
+        def kl_custom_metric(y_true, y_pred):
+            # Ignore input and take from z tensors.
+            return kl_measure(z_mean, z_log_var)
 
-        vae_d1_decoder = vae_d1(vae_z_out_decoder)
-        vae_d2_decoder = vae_d2(vae_d1_decoder)
-        vae_d3_decoder = vae_d3(vae_d2_decoder)
-        vae_d4_decoder = vae_d4(vae_d3_decoder)
+        class VAELayer(keras.layers.Layer):
+            def __init__(self, **kwargs):
+                self.is_placeholder = True
+                super(VAELayer, self).__init__(**kwargs)
 
-        #### MODELS
+            def vae_loss(self, x, z_decoded):
+                x = K.flatten(x)
+                z_decoded = K.flatten(z_decoded)
+                r_loss = original_dim * xent(x, z_decoded)
+                kl_loss = kl_measure(z_mean, z_log_var)
+                print("KL Shape:", K.int_shape(kl_loss))
+                print("Xent shape:", K.int_shape(r_loss))
+                return K.mean(r_loss + kl_loss)
 
-        vae = Model(vae_x, vae_d4_model)
-        vae_encoder = Model(vae_x, vae_z)
-        vae_decoder = Model(vae_z_input, vae_d4_decoder)
+            def call(self, inputs):
+                x = inputs[0]
+                z_decoded = inputs[1]
+                loss = self.vae_loss(x, z_decoded)
+                self.add_loss(loss, inputs=inputs)
+                return x
 
-        #Reconstruction loss. Mean squared error between input image and reconstruction.
-        def vae_r_loss(y_true, y_pred):
-            y_true_flat = K.flatten(y_true)
-            y_pred_flat = K.flatten(y_pred)
-            #Mean squared error -same as original paper.
-            return 10 * K.mean(K.square(y_true_flat - y_pred_flat), axis=-1)
+        y = VAELayer()([input_img, z_decoded])
 
-        #KL-loss. Ensures the probability distribution modelled by Z behaves nicely.
-        #Follows formula from original paper. Difference from Keras cookbook: There, this loss was multiplied by
-        #-0.0005 instead of -0.5. Weird.
-        def vae_kl_loss(y_true, y_pred):
-            return - 0.5 * K.mean(1 + vae_z_log_var - K.square(vae_z_mean) - K.exp(vae_z_log_var), axis=-1)
+        vae = Model(input_img, y, name="VAE")
+        vae.compile(optimizer='adam', metrics=['mse', 'binary_crossentropy'])
 
-        #Final loss just sums the two. In Keras, the mean, rather than sum, was used here. Shouldn't make a difference?
-        def vae_loss(y_true, y_pred):
-            return vae_r_loss(y_true, y_pred) + vae_kl_loss(y_true, y_pred)
-        print("Compiling")
-        #Compiling the network, and returning the models.
-        vae.compile(optimizer='rmsprop', loss=vae_loss, metrics=[vae_r_loss, vae_kl_loss])
+        # def vae_loss(y_true, y_pred):
+        #     loss_r = original_dim * xent(y_true, y_pred)
+        #     loss_kl = kl_measure(z_mean, z_log_var)
+        #     return K.mean(loss_r + loss_kl)
 
-        return (vae, vae_encoder, vae_decoder)
+        # end-to-end autoencoder
+        # vae = Model(input_img, z_decoded, name="VAE")
+        # vae.add_loss(vae_loss)
+        # vae.compile(optimizer='adam')
 
-    #Loading weights from file
+        vae.summary()
+
+        # # encoder, from inputs to latent space
+        # encoder = Model(x, z_mean)
+
+        # # generator, from latent space to reconstructed inputs
+        # decoder_input = Input(shape=(latent_dim,))
+        # _h_decoded = decoder_h(decoder_input)
+        # _x_decoded_mean = decoder_mean(_h_decoded)
+        return (vae, encoder, decoder)
+
+    # Loading weights from file
     def set_weights(self, filepath):
         self.model.load_weights(filepath)
 
-    #Training the VAE
-    def train(self, data, validation_split=0.2):
+    def load_encoder_weights(self,filepath):
+        self.encoder.load_weights(filepath)
 
-        #Specifying when and how to store networks
-        #TODO Allow user to specify folder
-        savefile_path = "models/weights-improvement-{epoch:02d}-{val_acc:.2f}.hdf5"
-        earlystop = ModelCheckpoint(monitor='val_loss', min_delta=0.0001, patience=5, verbose=0, mode='auto')
-        callbacks_list = [earlystop]
+    def load_decoder_weights(self,filepath):
+        self.decoder.load_weights(filepath)
+
+    # Training the VAE
+    def train(self, data, epochs, save_interval=0, savefolder = "./models/"):
 
         print("VAE input: ", data.shape)
 
-        self.model.fit(data, data,
+        #For storing models during runs.
+        #TODO Add option to specify folder.
+        if save_interval:
+            filepath = os.path.join(savefolder,"weights-{epoch:02d}-{loss:.2f}.hdf5")
+            model_saver = ModelCheckpoint(filepath=filepath, monitor='val_vae_loss',save_best_only=True,
+                                          save_weights_only=True, mode='min', period=save_interval)
+            callbacks_list = [model_saver]
+        else:
+            callbacks_list=[]
+
+
+        return self.model.fit(data,
                        shuffle=True,
-                       epochs=EPOCHS,
-                       batch_size=BATCH_SIZE,
-                       validation_split=validation_split,
+                       epochs=epochs,
+                       batch_size=batch_size,
                        callbacks=callbacks_list)
 
-        self.model.save_weights('./vae/weights.h5')
-
     def save_weights(self, filepath):
-        self.model.save_weights(filepath)
+        self.model.save_weights(filepath+"full_vae_weights.h5")
+        self.encoder.save_weights(filepath+"encoder_only_weights.h5")
+        self.decoder.save_weights(filepath+"decoder_only_weights.h5")
+        #TODO Consider if we have to save encoder/decoder too.
 
-
-    #Kept from the old code. Consider if it can be better to have this elsewhere.
+    # Kept from the old code. Consider if it can be better to have this elsewhere.
     def generate_rnn_data(self, obs_data, action_data):
         rnn_input = []
         rnn_output = []
@@ -169,14 +193,14 @@ class VAE():
 
         return (rnn_input, rnn_output)
 
-    #Some functions to test the VAE
+    # Some functions to test the VAE
 
-    #Generates latent z-values for all pictures in one rollout.
-    def generate_latent_variables(self,input):
+    # Generates latent z-values for all pictures in one rollout.
+    def generate_latent_variables(self, input):
         z_mean = self.encoder.predict(input, batch_size=1)
         return z_mean
 
-    #Regenerates pictures based on latent values.
+    # Regenerates pictures based on latent values.
     def generate_picture_from_latent(self, latent_variables):
         decoded_images = self.decoder.predict(latent_variables)
         return decoded_images
