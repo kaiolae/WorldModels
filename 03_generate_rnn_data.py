@@ -26,10 +26,10 @@ def main(args):
     if not os.path.exists(savefolder):
         os.makedirs(savefolder)
 
-    vae = VAE.vae()
+    vae = VAE()
 
     try:
-      vae.set_weights('./vae/weights.h5')
+      vae.set_weights(vae_weights)
     except:
       print(vae_weights, " does not exist - ensure you have run 02_train_vae.py first")
       raise
@@ -42,6 +42,8 @@ def main(args):
         print("Image data was of integer type. Converting to float before further processing.")
         obs_data = obs_data.astype('float32') / 255.
 
+    print("each obs has shape", obs_data[0][0].shape)
+    single_episode = obs_data[0]  #Need to store each ep separately. we cant predict btw episodes
     # Generating all latent codes
     latent_values = vae.generate_latent_variables(obs_data)
 
@@ -52,11 +54,11 @@ if __name__ == "__main__":
 
     #Kept argument parsing from original Keras code. Consider updating.
     parser = argparse.ArgumentParser(description=('Train VAE'))
-    parser.add_argument('--obs_file', type=str, help="Folder to store results in. Default is ./vae/weights.h5",
-                        default = "./vae/weights.h5")
-    parser.add_argument('--loaded_vae_weigthts', type=str, help="Folder to store results in. Default is ./data/obs_data_doomrnn_1.npy",
+    parser.add_argument('--obs_file', type=str, help="Path to observations-file.",
                         default = "./data/obs_data_doomrnn_1.npy")
-    parser.add_argument('--action_file', type=str, help="Folder to store results in. Default is ./data/action_data_doomrnn_1.npy",
+    parser.add_argument('--loaded_vae_weights', type=str, help="Path to load VAE weights from.",
+                        default = "./vae/weights.h5")
+    parser.add_argument('--action_file', type=str, help="Path to actions-file.",
                         default = "./data/action_data_doomrnn_1.npy")
     parser.add_argument('--savefolder', type=str, help="Folder to store results in. Default is ./rnn-data/",
                         default = "./rnn-data/")
