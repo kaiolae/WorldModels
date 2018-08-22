@@ -42,10 +42,21 @@ def main(args):
         print("Image data was of integer type. Converting to float before further processing.")
         obs_data = obs_data.astype('float32') / 255.
 
-    print("each obs has shape", obs_data[0][0].shape)
-    single_episode = obs_data[0]  #Need to store each ep separately. we cant predict btw episodes
-    # Generating all latent codes
-    latent_values = vae.generate_latent_variables(obs_data)
+    #Need to store each ep separately. we cant predict btw episodes
+    #TODO Note: There are equally many actions and observations. I guess the final action can just be discarded?
+    z_sequences = [] #One for each ep
+    action_sequences = [] #One for each ep
+    for episode_number in range(len(obs_data)):
+        observations = np.array(obs_data[episode_number])
+        # Generating all latent codes for this episode
+        latent_values = vae.generate_latent_variables(observations)
+        z_sequences.append(latent_values)
+        action_sequences.append(np.array(action_data[episode_number]))
+
+        print("Added latent sequences of length ", len(latent_values), " and action sequence of length ", len(action_sequences[-1]))
+
+    z_sequences = np.array(z_sequences) #Will this work? Has sub-arrays of differing lengths.
+
 
     np.savez_compressed(os.path.join(savefolder, "rnn_training_data.npz"), action=action_data, latent = latent_values)
 
@@ -57,7 +68,7 @@ if __name__ == "__main__":
     parser.add_argument('--obs_file', type=str, help="Path to observations-file.",
                         default = "./data/obs_data_doomrnn_1.npy")
     parser.add_argument('--loaded_vae_weights', type=str, help="Path to load VAE weights from.",
-                        default = "./vae/weights.h5")
+                        default = "./models/final_full_vae_weights.h5")
     parser.add_argument('--action_file', type=str, help="Path to actions-file.",
                         default = "./data/action_data_doomrnn_1.npy")
     parser.add_argument('--savefolder', type=str, help="Folder to store results in. Default is ./rnn-data/",
