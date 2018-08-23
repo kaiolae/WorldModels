@@ -109,3 +109,4 @@ models/
 *.h5
 #*.ipynb
 .idea/
+rnn-data/
