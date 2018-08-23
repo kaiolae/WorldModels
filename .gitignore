@@ -107,5 +107,5 @@ venv.bak/
 data/
 models/
 *.h5
-*.ipynb
+#*.ipynb
 .idea/
