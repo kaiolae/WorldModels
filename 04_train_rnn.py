@@ -21,10 +21,11 @@ from keras import backend as K, Input
 
 K.set_session(sess)
 
+#TODO Handle interrupted sequences, and add dying-prediction
 
 
-
-SEQ_LENGTH = 300 #TODO Handle interrupted sequences, and add dying-prediction
+SEQ_LENGTH = 30
+SKIP_AHEAD = 3 #How many steps to skip forward when cutting out the next training sequence.
 EPOCHS = 100
 VAL_SPLIT = 0.15
 
@@ -66,24 +67,15 @@ def main(args):
     print("action contents: ", action_file[0][0])
     for i in range(len(latent_file)): #for each episode
         observations = latent_file[i] #All N observations (z-vectors) in an episode
-        if len(observations) < SEQ_LENGTH:
-            continue #Want to remove this later.
+        if len(observations) < SEQ_LENGTH: #If we can't generate a full sequence, we skip this episode.
+            continue
         actions = np.array(action_file[i]) #All N actions in an episode
-        observations=np.array(observations)
-
-        X_episode = []
-        y_episode = []
-        for j in range(len(observations) -1):
-            current_observation = observations[j]
-            next_observation = observations[j+1]
-            current_action = actions[j]
-            conc = np.concatenate([current_observation,[current_action]])
-            X_episode.append(conc)
-            y_episode.append(next_observation)
-
-        X.append(X_episode)
-        y.append(y_episode)
-        #TODO Add action to x as well.
+        observations_and_actions = [] #Concatenating for each timestep.
+        for timestep in range(len(observations)):
+            observations_and_actions.append(np.concatenate([observations[timestep],[actions[timestep]]]))
+        for j in range(0, len(observations) - SEQ_LENGTH, SKIP_AHEAD):
+            X.append(observations_and_actions[j:j+SEQ_LENGTH]) #the N prev obs. and actions
+            y.append(observations[j+SEQ_LENGTH]) #The next obs
 
     X=np.array(X)
     y=np.array(y)

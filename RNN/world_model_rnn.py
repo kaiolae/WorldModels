@@ -8,7 +8,7 @@ BATCH_SIZE = 20 # Fant ikke Ha's verdi i farta
 NUM_LSTM_UNITS = 256
 NUM_MIXTURES = 5
 ACTION_DIMENSIONALITY = 1 #TODO Is this right?
-SEQ_LENGTH = 300
+SEQ_LENGTH = 30
 
 class RNN():
 
@@ -48,11 +48,13 @@ class RNN():
 
         return (rnn, forward)
 
+    #TODO Having trouble with compiling. Is it my code, or the MDN-RNN that does not handle seq-to-seq problems?
+    #Testing with a seq-to-1 setup. Could still learn to predict??
     def _build_sequential(self):
 
         # The RNN-mdn code from https://github.com/cpmpercussion/creative-prediction/blob/master/notebooks/7-MDN-Robojam-touch-generation.ipynb
         model=keras.Sequential()
-        model.add(keras.layers.LSTM(NUM_LSTM_UNITS, batch_input_shape=(None, SEQ_LENGTH-1, LATENT_VECTOR_SIZE+ACTION_DIMENSIONALITY),
+        model.add(keras.layers.LSTM(NUM_LSTM_UNITS, input_shape=(SEQ_LENGTH, LATENT_VECTOR_SIZE+ACTION_DIMENSIONALITY),
                                 return_sequences=False, name="Input_LSTM"))
         # TODO Return sequences returns the hidden state, and feeds that to the next layer. When I do this with the MDN,
         # I get an error, because it does not expect that input. I need to find a way to store the hidden state (for the
