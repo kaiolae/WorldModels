@@ -88,7 +88,7 @@ def main(args):
     # save training history
     fname = os.path.join(savefolder,'training_history.h5')
     with open(fname, 'wb') as file_pi:
-        pickle.dump(history, file_pi)
+        pickle.dump(history.history, file_pi)
 
 
 
