@@ -26,12 +26,12 @@ K.set_session(sess)
 
 SEQ_LENGTH = 30
 SKIP_AHEAD = 3 #How many steps to skip forward when cutting out the next training sequence.
-EPOCHS = 100
 VAL_SPLIT = 0.15
 
 def main(args):
     training_data_file = args.training_data_file
     savefolder = args.savefolder
+    epochs = args.epochs
 
     if not os.path.exists(savefolder):
         os.makedirs(savefolder)
@@ -99,6 +99,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=('Train VAE'))
     parser.add_argument('--training_data_file', type=str, help="Path to RNN training data.",
                         default = "./rnn-data/rnn_training_data.npz")
+    parser.add_argument('--epochs', type=int, help="How many passes through full training set.",
+                        default = 100)
     parser.add_argument('--savefolder', type=str, help="Folder to store resulting rnn-model in. Default is ./rnn-model/",
                         default = "./rnn-model/")
     args = parser.parse_args()
