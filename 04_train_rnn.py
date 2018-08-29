@@ -82,7 +82,7 @@ def main(args):
     print("X shape: ", X.shape)
     print("y shape: ", y.shape)
     #Training the model
-    history = rnn.train(X, y, EPOCHS, validation_split=VAL_SPLIT)
+    history = rnn.train(X, y, epochs, validation_split=VAL_SPLIT)
     rnn.save_weights(os.path.join(savefolder,"rnn_trained_model.h5"))
 
     # save training history
