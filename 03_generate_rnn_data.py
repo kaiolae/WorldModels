@@ -9,6 +9,7 @@ import os
 from VAE.world_model_vae import VAE
 import argparse
 import numpy as np
+import glob
 
 import tensorflow as tf
 tf_config = tf.ConfigProto()
@@ -18,8 +19,10 @@ from keras import backend as K
 K.set_session(sess)
 
 def main(args):
-    obs_file = args.obs_file
-    action_file = args.action_file
+    obs_folder = args.obs_folder
+    obs_file_pattern = os.path.join(obs_folder,'obs_data_*.npy')
+    action_file_pattern = os.path.join(obs_folder,'action_data_*.npy')
+    print("Obs file pattern: ", obs_file_pattern)
     savefolder = args.savefolder
     vae_weights = args.loaded_vae_weights
 
@@ -34,8 +37,20 @@ def main(args):
       print(vae_weights, " does not exist - ensure you have run 02_train_vae.py first")
       raise
 
-    obs_data = np.load(obs_file)
-    action_data = np.load(action_file)
+    obs_data = []
+    action_data = []
+    for obs_file in glob.glob(obs_file_pattern):
+        for episode in np.load(obs_file):
+            obs_data.append(episode)
+    for action_file in glob.glob(action_file_pattern):
+        for episode in np.load(action_file):
+            action_data.append(episode)
+
+    obs_data = np.array(obs_data)
+    action_data = np.array(action_data)
+
+    print("Obs data has shape ", obs_data)
+    print("action data has shape ", action_data)
 
     #If the image data is integral (range [0, 255]), we convert to float in range [0,1]
     #print(obs_data)
@@ -71,10 +86,9 @@ def main(args):
 
 if __name__ == "__main__":
 
-    #Kept argument parsing from original Keras code. Consider updating.
     parser = argparse.ArgumentParser(description=('Train VAE'))
-    parser.add_argument('--obs_file', type=str, help="Path to observations-file.",
-                        default = "./data/obs_data_doomrnn_1.npy")
+    parser.add_argument('--obs_folder', type=str, help="Path to observations-folder.",
+                        default = "./data/")
     parser.add_argument('--loaded_vae_weights', type=str, help="Path to load VAE weights from.",
                         default = "./models/final_full_vae_weights.h5")
     parser.add_argument('--action_file', type=str, help="Path to actions-file.",
