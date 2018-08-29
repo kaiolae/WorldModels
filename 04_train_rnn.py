@@ -51,7 +51,7 @@ def main(args):
     #model.add(keras.layers.LSTM(NUM_LSTM_UNITS, batch_input_shape=(None, SEQ_LENGTH, LATENT_VECTOR_SIZE),
     #                            return_sequences=False))
     # TODO Return sequences returns the hidden state, and feeds that to the next layer. When I do this with the MDN,
-    # I get an error, because it does not expect that input. I need to find a way to store the hidden state (for the
+    # I get an error, because it doenvs not expect that input. I need to find a way to store the hidden state (for the
     # controller) without return sequences?
     #model.add(keras.layers.LSTM(NUM_LSTM_UNITS)) #TODO Why does it crash when we only use 1 LSTM layer??
     #model.add(mdn.MDN(LATENT_VECTOR_SIZE, NUM_MIXTURES))
