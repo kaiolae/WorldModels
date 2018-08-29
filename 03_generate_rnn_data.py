@@ -20,8 +20,10 @@ K.set_session(sess)
 
 def main(args):
     obs_folder = args.obs_folder
-    obs_file_pattern = os.path.join(obs_folder,'obs_data_*.npy')
-    action_file_pattern = os.path.join(obs_folder,'action_data_*.npy')
+    obs_filename_base = 'obs_data_doomrnn_'
+    actions_filename_base = 'action_data_doomrnn_'
+    obs_file_pattern = os.path.join(obs_folder,obs_filename_base+'*')
+    action_file_pattern = os.path.join(obs_folder,actions_filename_base+'*')
     print("Obs file pattern: ", obs_file_pattern)
     savefolder = args.savefolder
     vae_weights = args.loaded_vae_weights
@@ -39,12 +41,16 @@ def main(args):
 
     obs_data = []
     action_data = []
-    for obs_file in glob.glob(obs_file_pattern):
+    for file_number in range(1,len(glob.glob(obs_file_pattern))+1):
+        obs_file = os.path.join(obs_folder, obs_filename_base)+file_number + ".npy"
+        action_file = os.path.join(obs_folder, actions_filename_base) + file_number + ".npy"
+        print("Loading obs file ", obs_file)
         for episode in np.load(obs_file):
             obs_data.append(episode)
-    for action_file in glob.glob(action_file_pattern):
+        print("loading action file ", action_file)
         for episode in np.load(action_file):
             action_data.append(episode)
+    print("-----LOADING FILES DONE -------")
 
     obs_data = np.array(obs_data)
     action_data = np.array(action_data)
