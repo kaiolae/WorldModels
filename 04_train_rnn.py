@@ -24,14 +24,14 @@ K.set_session(sess)
 #TODO Handle interrupted sequences, and add dying-prediction
 
 
-SEQ_LENGTH = 30
-SKIP_AHEAD = 3 #How many steps to skip forward when cutting out the next training sequence.
+SKIP_AHEAD = 1 #How many steps to skip forward when cutting out the next training sequence.
 VAL_SPLIT = 0.15
 
 def main(args):
     training_data_file = args.training_data_file
     savefolder = args.savefolder
     epochs = args.epochs
+    sequence_length = args.sequence_length
 
     if not os.path.exists(savefolder):
         os.makedirs(savefolder)
@@ -41,7 +41,7 @@ def main(args):
     action_file = rnn_training_data['action']
     latent_file = rnn_training_data['latent']
 
-    rnn = world_model_rnn.RNN()
+    rnn = world_model_rnn.RNN(sequence_length=sequence_length)
 
     #TODO: Now, what to do about the fact that episodes may have different lengths?
     #I'll start with just getting this to work for fixed-length sequences, then add dying and variable length after.
@@ -67,15 +67,15 @@ def main(args):
     print("action contents: ", action_file[0][0])
     for i in range(len(latent_file)): #for each episode
         observations = latent_file[i] #All N observations (z-vectors) in an episode
-        if len(observations) < SEQ_LENGTH: #If we can't generate a full sequence, we skip this episode.
+        if len(observations) < sequence_length: #If we can't generate a full sequence, we skip this episode.
             continue
         actions = np.array(action_file[i]) #All N actions in an episode
         observations_and_actions = [] #Concatenating for each timestep.
         for timestep in range(len(observations)):
             observations_and_actions.append(np.concatenate([observations[timestep],[actions[timestep]]]))
-        for j in range(0, len(observations) - SEQ_LENGTH, SKIP_AHEAD):
+        for j in range(0, len(observations) - sequence_length, SKIP_AHEAD):
             X.append(observations_and_actions[j:j+SEQ_LENGTH]) #the N prev obs. and actions
-            y.append(observations[j+SEQ_LENGTH]) #The next obs
+            y.append(observations[j+sequence_length]) #The next obs
 
     X=np.array(X)
     y=np.array(y)
@@ -101,6 +101,8 @@ if __name__ == "__main__":
                         default = "./rnn-data/rnn_training_data.npz")
     parser.add_argument('--epochs', type=int, help="How many passes through full training set.",
                         default = 100)
+    parser.add_argument('--sequence_length', type=int, help="How many steps per sequence during training.",
+                        default = 60)
     parser.add_argument('--savefolder', type=str, help="Folder to store resulting rnn-model in. Default is ./rnn-model/",
                         default = "./rnn-model/")
     args = parser.parse_args()
