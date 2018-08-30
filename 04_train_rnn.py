@@ -74,7 +74,7 @@ def main(args):
         for timestep in range(len(observations)):
             observations_and_actions.append(np.concatenate([observations[timestep],[actions[timestep]]]))
         for j in range(0, len(observations) - sequence_length, SKIP_AHEAD):
-            X.append(observations_and_actions[j:j+SEQ_LENGTH]) #the N prev obs. and actions
+            X.append(observations_and_actions[j:j+sequence_length]) #the N prev obs. and actions
             y.append(observations[j+sequence_length]) #The next obs
 
     X=np.array(X)
