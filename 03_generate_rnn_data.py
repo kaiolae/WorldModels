@@ -42,8 +42,8 @@ def main(args):
     obs_data = []
     action_data = []
     for file_number in range(1,len(glob.glob(obs_file_pattern))+1):
-        obs_file = os.path.join(obs_folder, obs_filename_base)+file_number + ".npy"
-        action_file = os.path.join(obs_folder, actions_filename_base) + file_number + ".npy"
+        obs_file = os.path.join(obs_folder, obs_filename_base)+str(file_number) + ".npy"
+        action_file = os.path.join(obs_folder, actions_filename_base) + str(file_number) + ".npy"
         print("Loading obs file ", obs_file)
         for episode in np.load(obs_file):
             obs_data.append(episode)
@@ -55,8 +55,8 @@ def main(args):
     obs_data = np.array(obs_data)
     action_data = np.array(action_data)
 
-    print("Obs data has shape ", obs_data)
-    print("action data has shape ", action_data)
+    print("Obs data has shape ", obs_data.shape)
+    print("action data has shape ", action_data.shape)
 
     #If the image data is integral (range [0, 255]), we convert to float in range [0,1]
     #print(obs_data)
