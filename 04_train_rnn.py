@@ -29,9 +29,13 @@ VAL_SPLIT = 0.15
 
 def main(args):
     training_data_file = args.training_data_file
-    savefolder = args.savefolder
     epochs = args.epochs
     sequence_length = args.sequence_length
+    num_mixtures = args.num_mixtures
+
+    savefolder = "trained_sequential_rnn"
+    savefolder += "_" + str(num_mixtures) + "mixtures"
+    savefolder += "_" + args.output_folder_name
 
     if not os.path.exists(savefolder):
         os.makedirs(savefolder)
@@ -41,7 +45,7 @@ def main(args):
     action_file = rnn_training_data['action']
     latent_file = rnn_training_data['latent']
 
-    rnn = world_model_rnn.RNN(sequence_length=sequence_length)
+    rnn = world_model_rnn.RNN(sequence_length=sequence_length, num_mixtures=num_mixtures)
 
     #TODO: Now, what to do about the fact that episodes may have different lengths?
     #I'll start with just getting this to work for fixed-length sequences, then add dying and variable length after.
@@ -101,8 +105,12 @@ if __name__ == "__main__":
                         default = 100)
     parser.add_argument('--sequence_length', type=int, help="How many steps per sequence during training.",
                         default = 60)
-    parser.add_argument('--savefolder', type=str, help="Folder to store resulting rnn-model in. Default is ./rnn-model/",
-                        default = "./rnn-model/")
+    #parser.add_argument('--savefolder', type=str, help="Folder to store resulting rnn-model in. Default is ./rnn-model/",
+    #                    default = "./rnn-model/")
+    parser.add_argument('--num_mixtures', type=int, help="How many components in the mixture model.",
+                    default = 5)
+    parser.add_argument('--output_folder_name', type=str, help="Unique name to store each run in unique folder.",
+                        default = "run1")
     args = parser.parse_args()
 
     main(args)
