@@ -6,22 +6,21 @@ import mdn
 LATENT_VECTOR_SIZE = 64
 BATCH_SIZE = 256 # Fant ikke Ha's verdi i farta
 NUM_LSTM_UNITS = 256
-NUM_MIXTURES = 1
 ACTION_DIMENSIONALITY = 1 #TODO Is this right?
 
 class RNN():
 
-    def __init__(self, sequence_length = None, decoder_mode = False):
+    def __init__(self, sequence_length = None, decoder_mode = False, num_mixures = 5):
         if decoder_mode:
-            self.models = self._build_decoder()
+            self.models = self._build_decoder(num_mixures)
         else:
             assert(sequence_length!=None)
-            self.models = self._build(sequence_length) #TODO Do I need sequence length?
+            self.models = self._build(sequence_length, num_mixures) #TODO Do I need sequence length?
         self.model = self.models[0] #Used during training
         self.forward = self.models[1] #Used during prediction
 
 
-    def _build(self, sequence_length):
+    def _build(self, sequence_length, num_mixtures):
 
         #TODO: Now, what to do about the fact that episodes may have different lengths?
         #I'll start with just getting this to work for fixed-length sequences, then add dying and variable length after.
@@ -41,7 +40,7 @@ class RNN():
         #TODO If I want to use the internal RNN state for agent control, I can plug it in here.
         #lstm_output, _, _ = lstm_layer(inputs) #This is the trick to not pass the returned_states to the mdn!
         #mdn = Dense(GAUSSIAN_MIXTURES * (3 * Z_DIM))(lstm_output)  # + discrete_dim
-        mdn_output = keras.layers.TimeDistributed(mdn.MDN(LATENT_VECTOR_SIZE, NUM_MIXTURES, name='mdn_outputs'), name='td_mdn')(lstm_output)
+        mdn_output = keras.layers.TimeDistributed(mdn.MDN(LATENT_VECTOR_SIZE, num_mixtures, name='mdn_outputs'), name='td_mdn')(lstm_output)
 
         rnn = keras.models.Model(inputs=inputs, outputs=mdn_output)
 
@@ -54,13 +53,13 @@ class RNN():
 
         #forward = keras.Model([rnn_x] + inputs, [state_h, state_c])
         rnn.summary()
-        rnn.compile(loss=mdn.get_mixture_loss_func(LATENT_VECTOR_SIZE,NUM_MIXTURES), optimizer='adam')
+        rnn.compile(loss=mdn.get_mixture_loss_func(LATENT_VECTOR_SIZE,num_mixtures), optimizer='adam')
 
         return (rnn, None)
 
     #TODO Having trouble with compiling. Is it my code, or the MDN-RNN that does not handle seq-to-seq problems?
     #Testing with a seq-to-1 setup. Could still learn to predict??
-    def _build_sequential(self, sequence_length):
+    def _build_sequential(self, sequence_length, num_mixtures):
 
         # The RNN-mdn code from https://github.com/cpmpercussion/creative-prediction/blob/master/notebooks/7-MDN-Robojam-touch-generation.ipynb
         model=keras.Sequential()
@@ -70,20 +69,20 @@ class RNN():
         # I get an error, because it does not expect that input. I need to find a way to store the hidden state (for the
         # controller) without return sequences?
         #model.add(keras.layers.LSTM(NUM_LSTM_UNITS))
-        model.add(mdn.MDN(LATENT_VECTOR_SIZE, NUM_MIXTURES, name="Output_MDN"))
+        model.add(mdn.MDN(LATENT_VECTOR_SIZE, num_mixtures, name="Output_MDN"))
 
 
-        model.compile(loss=mdn.get_mixture_loss_func(LATENT_VECTOR_SIZE,NUM_MIXTURES), optimizer=keras.optimizers.Adam())
+        model.compile(loss=mdn.get_mixture_loss_func(LATENT_VECTOR_SIZE,num_mixtures), optimizer=keras.optimizers.Adam())
         model.summary()
         return (model, None)
 
-    def _build_decoder(self):
+    def _build_decoder(self, num_mixtures):
         #Decoder for using the trained model
         decoder = keras.Sequential()
         decoder.add(keras.layers.LSTM(NUM_LSTM_UNITS, batch_input_shape=(1,1, LATENT_VECTOR_SIZE+ACTION_DIMENSIONALITY),
                                 return_sequences=False, stateful=True, name="Input_LSTM"))
-        decoder.add(mdn.MDN(LATENT_VECTOR_SIZE, NUM_MIXTURES, name="decoder_output_MDN"))
-        decoder.compile(loss=mdn.get_mixture_loss_func(LATENT_VECTOR_SIZE, NUM_MIXTURES), optimizer=keras.optimizers.Adam())
+        decoder.add(mdn.MDN(LATENT_VECTOR_SIZE, num_mixtures, name="decoder_output_MDN"))
+        decoder.compile(loss=mdn.get_mixture_loss_func(LATENT_VECTOR_SIZE, num_mixtures), optimizer=keras.optimizers.Adam())
         decoder.summary()
 
         #decoder.load_weights(path_to_weights)
