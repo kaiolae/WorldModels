@@ -10,12 +10,12 @@ ACTION_DIMENSIONALITY = 1 #TODO Is this right?
 
 class RNN():
 
-    def __init__(self, sequence_length = None, decoder_mode = False, num_mixures = 5):
+    def __init__(self, sequence_length = None, decoder_mode = False, num_mixtures = 5):
         if decoder_mode:
-            self.models = self._build_decoder(num_mixures)
+            self.models = self._build_decoder(num_mixtures)
         else:
             assert(sequence_length!=None)
-            self.models = self._build(sequence_length, num_mixures) #TODO Do I need sequence length?
+            self.models = self._build(sequence_length, num_mixtures) #TODO Do I need sequence length?
         self.model = self.models[0] #Used during training
         self.forward = self.models[1] #Used during prediction
 
