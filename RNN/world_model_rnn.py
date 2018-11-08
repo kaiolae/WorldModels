@@ -4,9 +4,9 @@ import keras
 import mdn
 
 LATENT_VECTOR_SIZE = 64
-BATCH_SIZE = 64 # Fant ikke Ha's verdi i farta
+BATCH_SIZE = 256 # Fant ikke Ha's verdi i farta
 NUM_LSTM_UNITS = 256
-NUM_MIXTURES = 5
+NUM_MIXTURES = 1
 ACTION_DIMENSIONALITY = 1 #TODO Is this right?
 
 class RNN():
