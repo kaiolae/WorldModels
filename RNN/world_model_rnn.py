@@ -11,10 +11,9 @@ ACTION_DIMENSIONALITY = 1 #TODO Is this right?
 
 class RNN():
 
-    def __init__(self, sequence_length = None, decoder_mode = False, path_to_model = ''):
+    def __init__(self, sequence_length = None, decoder_mode = False):
         if decoder_mode:
-            assert(path_to_model!='')
-            self.models = self._build_decoder(path_to_model)
+            self.models = self._build_decoder()
         else:
             assert(sequence_length!=None)
             self.models = self._build(sequence_length) #TODO Do I need sequence length?
@@ -78,8 +77,8 @@ class RNN():
         model.summary()
         return (model, None)
 
-    def _build_decoder(self, path_to_weights):
-        #Decoder for using the trained model - loading it from the given weights.
+    def _build_decoder(self):
+        #Decoder for using the trained model
         decoder = keras.Sequential()
         decoder.add(keras.layers.LSTM(NUM_LSTM_UNITS, batch_input_shape=(1,1, LATENT_VECTOR_SIZE+ACTION_DIMENSIONALITY),
                                 return_sequences=False, stateful=True, name="Input_LSTM"))
@@ -87,7 +86,7 @@ class RNN():
         decoder.compile(loss=mdn.get_mixture_loss_func(LATENT_VECTOR_SIZE, NUM_MIXTURES), optimizer=keras.optimizers.Adam())
         decoder.summary()
 
-        decoder.load_weights(path_to_weights)
+        #decoder.load_weights(path_to_weights)
         return (decoder, None)
 
 
