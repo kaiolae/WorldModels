@@ -14,7 +14,7 @@ class RNN():
     def __init__(self, sequence_length = None, decoder_mode = False, path_to_model = ''):
         if decoder_mode:
             assert(path_to_model!='')
-            self.models = self._build_decoder()
+            self.models = self._build_decoder(path_to_model)
         else:
             assert(sequence_length!=None)
             self.models = self._build(sequence_length) #TODO Do I need sequence length?
