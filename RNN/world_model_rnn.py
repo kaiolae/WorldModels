@@ -3,8 +3,8 @@ import keras
 #Parameters of the MDN-RNN
 import mdn
 
-LATENT_VECTOR_SIZE = 16
-BATCH_SIZE = 2 # Fant ikke Ha's verdi i farta
+LATENT_VECTOR_SIZE = 64
+BATCH_SIZE = 64 # Fant ikke Ha's verdi i farta
 NUM_LSTM_UNITS = 256
 NUM_MIXTURES = 5
 ACTION_DIMENSIONALITY = 1 #TODO Is this right?
