@@ -53,8 +53,6 @@ def main(args):
     # TODO Return sequences returns the hidden state, and feeds that to the next layer. When I do this with the MDN,
     # I get an error, because it doenvs not expect that input. I need to find a way to store the hidden state (for the
     # controller) without return sequences?
-    #model.add(keras.layers.LSTM(NUM_LSTM_UNITS)) #TODO Why does it crash when we only use 1 LSTM layer??
-    #model.add(mdn.MDN(LATENT_VECTOR_SIZE, NUM_MIXTURES))
 
     #Setting up the training data
     #TODO Fix incomplete sequences
@@ -67,7 +65,7 @@ def main(args):
     print("action contents: ", action_file[0][0])
     for i in range(len(latent_file)): #for each episode
         observations = latent_file[i] #All N observations (z-vectors) in an episode
-        if len(observations) < sequence_length: #If we can't generate a full sequence, we skip this episode.
+        if len(observations) < sequence_length+1: #If we can't generate a full sequence, we skip this episode.
             continue
         actions = np.array(action_file[i]) #All N actions in an episode
         observations_and_actions = [] #Concatenating for each timestep.
@@ -75,7 +73,7 @@ def main(args):
             observations_and_actions.append(np.concatenate([observations[timestep],[actions[timestep]]]))
         for j in range(0, len(observations) - sequence_length, SKIP_AHEAD):
             X.append(observations_and_actions[j:j+sequence_length]) #the N prev obs. and actions
-            y.append(observations[j+sequence_length]) #The next obs
+            y.append(observations[j+1:j+sequence_length+1]) #The next observations
 
     X=np.array(X)
     y=np.array(y)
