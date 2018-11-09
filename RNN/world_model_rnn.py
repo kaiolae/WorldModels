@@ -4,7 +4,6 @@ import keras
 import mdn
 
 LATENT_VECTOR_SIZE = 64
-BATCH_SIZE = 256 # Fant ikke Ha's verdi i farta
 NUM_LSTM_UNITS = 256
 ACTION_DIMENSIONALITY = 1 #TODO Is this right?
 
@@ -92,7 +91,7 @@ class RNN():
     def set_weights(self, filepath):
         self.model.load_weights(filepath)
 
-    def train(self, rnn_input, rnn_output, epochs, validation_split=0.2):
+    def train(self, rnn_input, rnn_output, epochs, batch_size, validation_split=0.2):
         #earlystop = EarlyStopping(monitor='val_loss', min_delta=0.0001, patience=5, verbose=1, mode='auto')
         #"callbacks_list = [earlystop]
         print("RNN input shape ", rnn_input.shape)
@@ -101,10 +100,11 @@ class RNN():
         return self.model.fit(rnn_input, rnn_output,
                        shuffle=True,
                        epochs=epochs,
-                       batch_size=BATCH_SIZE,
+                       batch_size=batch_size,
                        validation_split=validation_split,
                               verbose=1)
                        #callbacks=callbacks_list)
+
 
 
     def save_weights(self, filepath):

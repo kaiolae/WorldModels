@@ -7,6 +7,7 @@
 import argparse
 import os
 import pickle
+import sys
 
 import keras
 import numpy as np
@@ -14,6 +15,9 @@ import mdn
 from RNN import world_model_rnn
 
 import tensorflow as tf
+
+from batch_generator import KerasBatchGenerator
+
 tf_config = tf.ConfigProto()
 tf_config.gpu_options.allow_growth = True
 sess = tf.Session(config=tf_config)
@@ -27,6 +31,7 @@ K.set_session(sess)
 SKIP_AHEAD = 1 #How many steps to skip forward when cutting out the next training sequence.
 VAL_SPLIT = 0.15
 BATCH_SIZE = 256 # Fant ikke Ha's verdi i farta
+
 
 def main(args):
     training_data_file = args.training_data_file
@@ -43,8 +48,8 @@ def main(args):
 
     #Loading z-values and actions. Expecting a compressed npz-file
     rnn_training_data = np.load(training_data_file)
-    action_file = rnn_training_data['action']
-    latent_file = rnn_training_data['latent']
+    action_data = rnn_training_data['action']
+    observation_data = rnn_training_data['latent']
 
     rnn = world_model_rnn.RNN(sequence_length=sequence_length, num_mixtures=num_mixtures)
 
@@ -61,31 +66,22 @@ def main(args):
 
     #Setting up the training data
     #TODO Fix incomplete sequences
-    X = []
-    y = []
-    print("Latent file size: ", len(latent_file))
-    print("First dim: ", len(latent_file[0]))
-    print("second dim: ", len(latent_file[0][0]))
-    print("contents: ", latent_file[0][0])
-    print("action contents: ", action_file[0][0])
-    for i in range(len(latent_file)): #for each episode
-        observations = latent_file[i] #All N observations (z-vectors) in an episode
-        if len(observations) < sequence_length+1: #If we can't generate a full sequence, we skip this episode.
-            continue
-        actions = np.array(action_file[i]) #All N actions in an episode
-        observations_and_actions = [] #Concatenating for each timestep.
-        for timestep in range(len(observations)):
-            observations_and_actions.append(np.concatenate([observations[timestep],[actions[timestep]]]))
-        for j in range(0, len(observations) - sequence_length, SKIP_AHEAD):
-            X.append(observations_and_actions[j:j+sequence_length]) #the N prev obs. and actions
-            y.append(observations[j+1:j+sequence_length+1]) #The next observations
+    print("Latent file size: ", len(observation_data))
+    print("First dim: ", len(observation_data[0]))
+    print("second dim: ", len(observation_data[0][0]))
+    print("contents: ", observation_data[0][0])
+    print("action contents: ", action_data[0][0])
 
-    X=np.array(X)
-    y=np.array(y)
-    print("X shape: ", X.shape)
-    print("y shape: ", y.shape)
+    #TODO if desired, set up a validatio data generator too.
+    train_data_generator = KerasBatchGenerator(observation_data, action_data, sequence_length, BATCH_SIZE)
+
     #Training the model
-    history = rnn.train(X, y, epochs, BATCH_SIZE, validation_split=VAL_SPLIT)
+    #history = rnn.train(X, y, epochs, BATCH_SIZE, validation_split=VAL_SPLIT)
+    #Training with generator to save memory.
+    history = rnn.model.fit_generator(train_data_generator.generate(),
+                            train_data_generator.get_total_num_train_samples()//BATCH_SIZE,
+                            epochs=epochs
+                            )
     rnn.save_weights(os.path.join(savefolder,"rnn_trained_model.h5"))
 
     # save training history
