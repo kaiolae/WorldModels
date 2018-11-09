@@ -23,7 +23,7 @@ import numpy as np
 
 LATENT_SPACE_DIMENSIONALITY = 64
 RNN_SIZE = 512
-VAE_PATH = "vae_model_64_dim/final_full_vae_weights.h5"
+VAE_PATH = "/home/kaiolae/code/word_models_keras_test/WorldModels/vae_model_64_dim/final_full_vae_weights.h5"
 
 def softmax(w, t=1.0):
     """Softmax function for a list or numpy array of logits. Also adjusts temperature."""
@@ -79,7 +79,7 @@ class RNNAnalyzer:
 
         self.z = predicted_latent
 
-        return predicted_latent, mixture_weights
+        return predicted_latent[0], mixture_weights
 
 
 if __name__ == "__main__":
