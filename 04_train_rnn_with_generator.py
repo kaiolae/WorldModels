@@ -39,7 +39,12 @@ def main(args):
     sequence_length = args.sequence_length
     num_mixtures = args.num_mixtures
 
-    savefolder = "trained_sequential_rnn"
+    upper_level_folder = args.upper_level_folder_name
+
+    if not os.path.exists(upper_level_folder):
+        os.makedirs(upper_level_folder)
+
+    savefolder = upper_level_folder+"/trained_sequential_rnn"
     savefolder += "_" + str(num_mixtures) + "mixtures"
     savefolder += "_" + args.output_folder_name
 
@@ -108,6 +113,8 @@ if __name__ == "__main__":
                     default = 5)
     parser.add_argument('--output_folder_name', type=str, help="Unique name to store each run in unique folder.",
                         default = "run1")
+    parser.add_argument('--upper_level_folder_name', type=str, help="Upper level folder to group several runs.",
+                        default = "results")
     args = parser.parse_args()
 
     main(args)

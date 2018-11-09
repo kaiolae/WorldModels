@@ -24,17 +24,21 @@ K.set_session(sess)
 #TODO Handle interrupted sequences, and add dying-prediction
 
 
-SKIP_AHEAD = 1 #How many steps to skip forward when cutting out the next training sequence.
 VAL_SPLIT = 0.15
 BATCH_SIZE = 256 # Fant ikke Ha's verdi i farta
 
 def main(args):
+    skip_ahead = args.skip_ahead
     training_data_file = args.training_data_file
     epochs = args.epochs
     sequence_length = args.sequence_length
     num_mixtures = args.num_mixtures
+    upper_level_folder = args.upper_level_folder_name
 
-    savefolder = "trained_sequential_rnn"
+    if not os.path.exists(upper_level_folder):
+        os.makedirs(upper_level_folder)
+
+    savefolder = upper_level_folder+"/trained_sequential_rnn"
     savefolder += "_" + str(num_mixtures) + "mixtures"
     savefolder += "_" + args.output_folder_name
 
@@ -76,7 +80,7 @@ def main(args):
         observations_and_actions = [] #Concatenating for each timestep.
         for timestep in range(len(observations)):
             observations_and_actions.append(np.concatenate([observations[timestep],[actions[timestep]]]))
-        for j in range(0, len(observations) - sequence_length, SKIP_AHEAD):
+        for j in range(0, len(observations) - sequence_length, skip_ahead):
             X.append(observations_and_actions[j:j+sequence_length]) #the N prev obs. and actions
             y.append(observations[j+1:j+sequence_length+1]) #The next observations
 
@@ -110,8 +114,14 @@ if __name__ == "__main__":
     #                    default = "./rnn-model/")
     parser.add_argument('--num_mixtures', type=int, help="How many components in the mixture model.",
                     default = 5)
+    parser.add_argument('--skip_ahead', type=int, help="How many steps in the sequence to skip forward between samples.",
+                    default = 5)
+
     parser.add_argument('--output_folder_name', type=str, help="Unique name to store each run in unique folder.",
                         default = "run1")
+    parser.add_argument('--upper_level_folder_name', type=str, help="Upper level folder to group several runs.",
+                        default = "results")
+
     args = parser.parse_args()
 
     main(args)
