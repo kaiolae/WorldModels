@@ -59,7 +59,7 @@ class RNNAnalyzer:
 
     def warm_up_lstm(self, actions, latent_vectors):
         #Warms up the LSTM with actual data - getting it into a "realistic" state.
-        for i in range(latent_vectors.size):
+        for i in range(latent_vectors.shape[0]):
             self.predict_one_step(actions[i], latent_vectors[i])
 
     #TODO Before using these predictions, perhaps I need to condition it for 60 timesteps first, to get it into a good state?

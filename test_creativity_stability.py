@@ -80,7 +80,6 @@ def count_events_on_trained_rnn(trained_vae, trained_rnn, initial_latent_vector,
     for i in range(num_timesteps-1):
         dreamed_latent, mixture_weights = trained_rnn.predict_one_step(actions[i+1])
         dreamed_latents.append(dreamed_latent)
-    print("Dreamed latents shape is ", np.array(dreamed_latents).shape)
     predicted_images = trained_vae.decoder.predict(np.array(dreamed_latents))
 
     return count_events_from_images(predicted_images)
