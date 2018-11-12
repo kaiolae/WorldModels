@@ -1,5 +1,5 @@
 FIREBALL_THRESHOLD = 0.5
-from count_monsters_and_balls import count_monsters, count_fireballs
+from count_monsters_and_balls import count_monsters, count_fireballs, is_there_a_big_explosion
 import numpy as np
 
 #TODO May also need a method that takes two sequences (real and dreamed) and measures DIFFERENCES.
@@ -7,6 +7,8 @@ def count_events_from_images(image_sequence):
     num_fireballs = 0
     num_monsters = 0
     thresholded_images = [] #Potentially useful for debugging
+    images_with_explosion = 0
+    images_without_explosion = 0
     for img in image_sequence:
         fb, thresholded_image = count_fireballs(img, FIREBALL_THRESHOLD)
         thresholded_images.append(thresholded_image)
@@ -14,9 +16,15 @@ def count_events_from_images(image_sequence):
         num_fireballs+=fb
 
         monsters, img = count_monsters(img)
+        is_exploding = is_there_a_big_explosion(img, FIREBALL_THRESHOLD)
+        if is_exploding:
+            images_with_explosion += 1
+        else:
+            images_without_explosion += 1
         num_monsters += monsters
 
-    return {"num_fireballs":num_fireballs, "num_monsters":num_monsters}
+    return {"num_fireballs":num_fireballs, "num_monsters":num_monsters, "with_explosion": images_with_explosion,
+            "without_explosion": images_without_explosion}
 
 def count_appearances_and_disappearances_from_images(image_sequence):
     fireball_delta = 0
@@ -65,6 +73,22 @@ def count_different_events_in_images(real_images, predicted_images):
             "imagined_monsters": imagined_monsters}
 
 def count_events_on_trained_rnn(trained_vae, trained_rnn, initial_latent_vector, actions, num_timesteps = 100):
+    assert(len(actions)>=num_timesteps)
+    dreamed_latents = []
+    dreamed_latent, mixture_weights = trained_rnn.predict_one_step(actions[0], previous_z=initial_latent_vector)
+    dreamed_latents.append(dreamed_latent)
+    for i in range(num_timesteps-1):
+        dreamed_latent, mixture_weights = trained_rnn.predict_one_step(actions[i+1])
+        dreamed_latents.append(dreamed_latent)
+    print("Dreamed latents shape is ", np.array(dreamed_latents).shape)
+    predicted_images = trained_vae.decoder.predict(np.array(dreamed_latents))
+
+    return count_events_from_images(predicted_images)
+
+#Measurements indicate that the different mixtures do not indicate different things that could happen (e.g. fireballs appearing,
+#monsters disappearing, etc). Rather, they encode different scenarios with different "rules" / laws of physics, such as
+#normal scenes (fireballs propagating, etc) and explosion-scenes (where very different rules apply).
+def count_explosion_vs_non_explosion_events(trained_vae, trained_rnn, initial_latent_vector, actions, num_timesteps = 100):
     assert(len(actions)>=num_timesteps)
     dreamed_latents = []
     dreamed_latent, mixture_weights = trained_rnn.predict_one_step(actions[0], previous_z=initial_latent_vector)
