@@ -22,7 +22,7 @@ def count_monsters(img):
 def count_fireballs(img, fireball_threshold):
     return count_objects(img, fireball_threshold, above_threshold=True)
 
-def is_there_a_big_explosion(image, fireball_threshold):
+def is_there_a_big_explosion(input_image, fireball_threshold):
     # Classifies whether there is currently a big fireball exploding in the image.
     # Defined here as having an explosion covering more than 10% of the pixels.
     im = color.rgb2gray(input_image)
