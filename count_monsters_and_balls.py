@@ -36,7 +36,7 @@ def is_there_a_big_explosion(input_image, fireball_threshold):
 #Very simple wall-detection based on color of walls wrt. floor/ceiling.
 #Detects walls if they are so close that the corner pixel is covered by the wall.
 #Wall has red-component around 110, ceiling/floor around 80. Intermediate threshold lets us separate the two.
-def is_there_a_lefhand_wall(input_image, wall_threshold):
+def is_there_a_lefthand_wall(input_image, wall_threshold):
     #If the wall goes up to the 10th pixel from top, it's close enough that we define that as being next to the wall.
     desired_pixel_row = 10
     desired_pixel_column = 0
