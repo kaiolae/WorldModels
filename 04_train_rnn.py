@@ -92,7 +92,7 @@ def main(args):
 
 
     X = np.multiply(X, data_scaling_factor)
-    Y = np.multiply(Y, data_scaling_factor)
+    Y = np.multiply(y, data_scaling_factor)
     print("X shape: ", X.shape)
     print("y shape: ", y.shape)
     #Training the model
