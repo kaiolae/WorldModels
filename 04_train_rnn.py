@@ -34,6 +34,7 @@ def main(args):
     sequence_length = args.sequence_length
     num_mixtures = args.num_mixtures
     upper_level_folder = args.upper_level_folder_name
+    data_scaling_factor = args.data_scaling_factor
 
     if not os.path.exists(upper_level_folder):
         os.makedirs(upper_level_folder)
@@ -68,7 +69,7 @@ def main(args):
     X = []
     y = []
     print("Latent file size: ", len(latent_file))
-    print("First dim: ", len(latent_file[0]))
+    print("First dim: ", len(latent_file[3]))
     print("second dim: ", len(latent_file[0][0]))
     print("contents: ", latent_file[0][0])
     print("action contents: ", action_file[0][0])
@@ -84,8 +85,14 @@ def main(args):
             X.append(observations_and_actions[j:j+sequence_length]) #the N prev obs. and actions
             y.append(observations[j+1:j+sequence_length+1]) #The next observations
 
+
+
     X=np.array(X)
     y=np.array(y)
+
+
+    X = np.multiply(X, data_scaling_factor)
+    Y = np.multiply(Y, data_scaling_factor)
     print("X shape: ", X.shape)
     print("y shape: ", y.shape)
     #Training the model
@@ -121,6 +128,8 @@ if __name__ == "__main__":
                         default = "run1")
     parser.add_argument('--upper_level_folder_name', type=str, help="Upper level folder to group several runs.",
                         default = "results")
+    parser.add_argument('--data_scaling_factor', type=float, help="If we want to scale all data by a fixed scalar (may help avoid nans).",
+                        default = 1.0)
 
     args = parser.parse_args()
 
