@@ -65,7 +65,7 @@ class RNNAnalyzer:
             self.predict_one_step(actions[i], latent_vectors[i])
 
     #TODO Before using these predictions, perhaps I need to condition it for 60 timesteps first, to get it into a good state?
-    def predict_one_step(self, action, previous_z=[]):
+    def predict_one_step(self, action, previous_z=[], sigma_temp = 1.0):
         #Predicts one step ahead from the previous state.
         #If previous z is given, we predict with that as input. Otherwise, we dream from the previous output we generated.
 
@@ -83,12 +83,15 @@ class RNNAnalyzer:
 
         rnn_input = np.append(prev_z[0][0], action)
 
+        #print("Inserting to RNN:")
+        #print(rnn_input)
         mixture_params = self.rnn.model.predict(np.array([[rnn_input]]))
-        predicted_latent = mdn.sample_from_output(mixture_params[0], LATENT_SPACE_DIMENSIONALITY, self.num_mixtures, temp=self.temperature)
+        predicted_latent = mdn.sample_from_output(mixture_params[0], LATENT_SPACE_DIMENSIONALITY, self.num_mixtures, temp=self.temperature, sigma_temp=sigma_temp)
         mixture_weights = softmax(mixture_params[0][-self.num_mixtures:], t=self.temperature)
-
+        #print("Got out from RNN after sampling: ")
+        #print(predicted_latent)
         #Downscaling to output size.
-        predicted_latent = np.divide(predicted_latent, self.ioscaling)
+        #predicted_latent = np.divide(predicted_latent, self.ioscaling)
         self.z = predicted_latent
 
         return predicted_latent[0], mixture_weights
