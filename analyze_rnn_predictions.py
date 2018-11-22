@@ -70,7 +70,7 @@ class RNNAnalyzer:
         #If previous z is given, we predict with that as input. Otherwise, we dream from the previous output we generated.
 
         #Scaling inputs
-        if previous_z:
+        if len(previous_z) > 0:
             previous_z = np.array(previous_z)
             previous_z = np.multiply(previous_z, self.ioscaling)
 
