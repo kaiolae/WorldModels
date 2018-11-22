@@ -35,7 +35,7 @@ def softmax(w, t=1.0):
 
 class RNNAnalyzer:
 
-    def __init__(self, rnn_load_path, num_mixtures, temperature):
+    def __init__(self, rnn_load_path, num_mixtures, temperature, io_scaling = 1.0):
         self.vae=VAE()
         self.vae.set_weights(VAE_PATH)
 
@@ -46,6 +46,7 @@ class RNNAnalyzer:
         self.z = None
         self.num_mixtures = num_mixtures
         self.temperature = temperature
+        self.ioscaling = io_scaling
 
 
     def _reset(self):
@@ -59,6 +60,7 @@ class RNNAnalyzer:
 
     def warm_up_lstm(self, actions, latent_vectors):
         #Warms up the LSTM with actual data - getting it into a "realistic" state.
+        latent_vectors = np.multiply(latent_vectors, self.ioscaling)
         for i in range(latent_vectors.shape[0]):
             self.predict_one_step(actions[i], latent_vectors[i])
 
@@ -66,6 +68,11 @@ class RNNAnalyzer:
     def predict_one_step(self, action, previous_z=[]):
         #Predicts one step ahead from the previous state.
         #If previous z is given, we predict with that as input. Otherwise, we dream from the previous output we generated.
+
+        #Scaling inputs
+        if previous_z:
+            previous_z = np.array(previous_z)
+            previous_z = np.multiply(previous_z, self.ioscaling)
 
         self.frame_count += 1
         prev_z = np.zeros((1, 1, LATENT_SPACE_DIMENSIONALITY))
@@ -80,6 +87,8 @@ class RNNAnalyzer:
         predicted_latent = mdn.sample_from_output(mixture_params[0], LATENT_SPACE_DIMENSIONALITY, self.num_mixtures, temp=self.temperature)
         mixture_weights = softmax(mixture_params[0][-self.num_mixtures:], t=self.temperature)
 
+        #Downscaling to output size.
+        predicted_latent = np.divide(predicted_latent, self.ioscaling)
         self.z = predicted_latent
 
         return predicted_latent[0], mixture_weights
