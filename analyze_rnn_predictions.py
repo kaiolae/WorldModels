@@ -33,6 +33,17 @@ def softmax(w, t=1.0):
     dist = e / np.sum(e)
     return dist
 
+def sample_from_one_specific_mixture(mdn, mixture_number, params, output_dim, total_num_mixes, sigma_temp):
+
+    #To make dreams only from 1 of the trained mixtures - helps see what's inside there.
+    mus, sigs, pi_logits = mdn.split_mixture_params(params, output_dim, total_num_mixes)
+    mus_vector = mus[mixture_number*output_dim:(mixture_number+1)*output_dim]
+    sig_vector = sigs[mixture_number*output_dim:(mixture_number+1)*output_dim] * sigma_temp  # adjust for temperature
+    cov_matrix = np.identity(output_dim) * sig_vector
+    sample = np.random.multivariate_normal(mus_vector, cov_matrix, 1)
+    return sample
+
+
 class RNNAnalyzer:
 
     def __init__(self, rnn_load_path, num_mixtures, temperature, io_scaling = 1.0):
@@ -65,7 +76,7 @@ class RNNAnalyzer:
             self.predict_one_step(actions[i], latent_vectors[i])
 
     #TODO Before using these predictions, perhaps I need to condition it for 60 timesteps first, to get it into a good state?
-    def predict_one_step(self, action, previous_z=[], sigma_temp = 1.0):
+    def predict_one_step(self, action, previous_z=[], sigma_temp = 1.0, force_prediction_from_mixture = -1):
         #Predicts one step ahead from the previous state.
         #If previous z is given, we predict with that as input. Otherwise, we dream from the previous output we generated.
 
@@ -86,7 +97,12 @@ class RNNAnalyzer:
         #print("Inserting to RNN:")
         #print(rnn_input)
         mixture_params = self.rnn.model.predict(np.array([[rnn_input]]))
-        predicted_latent = mdn.sample_from_output(mixture_params[0], LATENT_SPACE_DIMENSIONALITY, self.num_mixtures, temp=self.temperature, sigma_temp=sigma_temp)
+
+        #If requested, sample from one specific mixture
+        if force_prediction_from_mixture != -1:
+            predicted_latent = sample_from_one_specific_mixture(mdn, force_prediction_from_mixture, mixture_params[0], LATENT_SPACE_DIMENSIONALITY, self.num_mixtures, sigma_temp)
+        else:
+            predicted_latent = mdn.sample_from_output(mixture_params[0], LATENT_SPACE_DIMENSIONALITY, self.num_mixtures, temp=self.temperature, sigma_temp=sigma_temp)
         mixture_weights = softmax(mixture_params[0][-self.num_mixtures:], t=self.temperature)
         #print("Got out from RNN after sampling: ")
         #print(predicted_latent)
