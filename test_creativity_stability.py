@@ -1,4 +1,7 @@
 FIREBALL_THRESHOLD = 0.5
+#How many consecutive frames to say we've gone into and out of an explosion.
+EXPLOSION_START_THRESHOLD = 3
+EXPLOSION_END_THRESHOLD = 3
 from count_monsters_and_balls import count_monsters, count_fireballs, is_there_a_big_explosion
 import numpy as np
 
@@ -7,24 +10,39 @@ def count_events_from_images(image_sequence):
     num_fireballs = 0
     num_monsters = 0
     thresholded_images = [] #Potentially useful for debugging
-    images_with_explosion = 0
-    images_without_explosion = 0
+    images_with_explosion = []
+    images_without_explosion = []
+    currently_exploding = False
+    num_initiated_explosions = 0
+    current_consecutive_explosion_images_counter = 0
+    current_consecutive_non_explosion_images_counter = 0
     for img in image_sequence:
         fb, thresholded_image = count_fireballs(img, FIREBALL_THRESHOLD)
         thresholded_images.append(thresholded_image)
 
         num_fireballs+=fb
 
-        monsters, img = count_monsters(img)
+        monsters, thresholded_imgage2 = count_monsters(img)
         is_exploding = is_there_a_big_explosion(img, FIREBALL_THRESHOLD)
         if is_exploding:
-            images_with_explosion += 1
+            current_consecutive_explosion_images_counter +=1
+            current_consecutive_non_explosion_images_counter =0
+            images_with_explosion.append(img)
         else:
-            images_without_explosion += 1
+            current_consecutive_explosion_images_counter = 0
+            current_consecutive_non_explosion_images_counter += 1
+            images_without_explosion.append(img)
+        if not currently_exploding and current_consecutive_explosion_images_counter >= EXPLOSION_START_THRESHOLD:
+             currently_exploding = True
+             num_initiated_explosions += 1
+
+        if currently_exploding and current_consecutive_non_explosion_images_counter >= EXPLOSION_END_THRESHOLD:
+             currently_exploding = False
         num_monsters += monsters
 
     return {"num_fireballs":num_fireballs, "num_monsters":num_monsters, "with_explosion": images_with_explosion,
-            "without_explosion": images_without_explosion}
+            "without_explosion": images_without_explosion, "num_with_explosion": len(images_with_explosion),
+            "num_without_explosion": len(images_without_explosion), "num_initiated_explosions": num_initiated_explosions}
 
 def count_appearances_and_disappearances_from_images(image_sequence):
     fireball_delta = 0

@@ -52,7 +52,10 @@ class RNN():
 
         #forward = keras.Model([rnn_x] + inputs, [state_h, state_c])
         rnn.summary()
-        rnn.compile(loss=mdn.get_mixture_loss_func(LATENT_VECTOR_SIZE,num_mixtures), optimizer='adam')
+        #default Adam LR is 0.001. Trying half of that.
+        #adam = keras.optimizers.Adam(lr=0.0005)
+        adam = keras.optimizers.Adam()
+        rnn.compile(loss=mdn.get_mixture_loss_func(LATENT_VECTOR_SIZE,num_mixtures), optimizer=adam)
 
         return (rnn, None)
 
