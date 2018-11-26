@@ -55,9 +55,9 @@ def main(args):
         print('Building batch {}...'.format(batch_num))
 
         for env_name in config.train_envs:
-            print("Loading data from ", './data/obs_data_' + env_name + '_' + str(batch_num) + '.npy')
+            print("Loading data from ", './data_small_episodes/obs_data_' + env_name + '_' + str(batch_num) + '.npy')
             try:
-                new_data = np.load('./data/obs_data_' + env_name + '_' + str(batch_num) + '.npy')
+                new_data = np.load('./data_small_episodes/obs_data_' + env_name + '_' + str(batch_num) + '.npy')
                 print("Shape after load: ", new_data.shape)
                 if first_item:
                     print("Initializing data")
