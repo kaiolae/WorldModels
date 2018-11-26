@@ -92,8 +92,9 @@ class RNN():
         self.model.load_weights(filepath)
 
     def train(self, rnn_input, rnn_output, epochs, batch_size, validation_split=0.2):
-        #earlystop = EarlyStopping(monitor='val_loss', min_delta=0.0001, patience=5, verbose=1, mode='auto')
-        #"callbacks_list = [earlystop]
+        #Stops training if val loss stops improving.
+        earlystop = EarlyStopping(monitor='val_loss', min_delta=0.0001, patience=5, verbose=1, mode='auto')
+        callbacks_list = [earlystop]
         print("RNN input shape ", rnn_input.shape)
         print("RNN output shape ", rnn_output.shape)
 
@@ -102,8 +103,7 @@ class RNN():
                        epochs=epochs,
                        batch_size=batch_size,
                        validation_split=validation_split,
-                              verbose=1)
-                       #callbacks=callbacks_list)
+                              verbose=1, callbacks=callbacks_list)
 
 
 
