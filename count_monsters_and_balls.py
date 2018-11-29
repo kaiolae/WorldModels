@@ -57,3 +57,10 @@ def is_there_a_righthand_wall(input_image, wall_threshold):
         return True
     else:
         return False
+
+def is_there_a_wall(input_image, wall_threshold):
+    is_left = is_there_a_lefthand_wall(input_image, wall_threshold)
+    if not is_left:
+        return is_there_a_righthand_wall(input_image, wall_threshold)
+    else:
+        return True

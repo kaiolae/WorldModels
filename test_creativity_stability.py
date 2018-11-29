@@ -1,8 +1,10 @@
 FIREBALL_THRESHOLD = 0.5
+WALL_THRESHOLD = 0.39
 #How many consecutive frames to say we've gone into and out of an explosion.
 EXPLOSION_START_THRESHOLD = 3
 EXPLOSION_END_THRESHOLD = 3
-from count_monsters_and_balls import count_monsters, count_fireballs, is_there_a_big_explosion
+
+from count_monsters_and_balls import count_monsters, count_fireballs, is_there_a_big_explosion, is_there_a_wall
 import numpy as np
 
 #TODO May also need a method that takes two sequences (real and dreamed) and measures DIFFERENCES.
@@ -71,6 +73,10 @@ def count_different_events_in_images(real_images, predicted_images):
     imagined_fireballs = 0
     missing_monsters = 0
     imagined_monsters = 0
+    missing_explosions = 0
+    missing_walls = 0
+    imagined_explosions = 0
+    imagined_walls = 0
     for i in range(len(real_images)):
         actual_num_fireballs, img = count_fireballs(real_images[i], FIREBALL_THRESHOLD)
         predicted_num_fireballs, thresholded_image = count_fireballs(predicted_images[i],FIREBALL_THRESHOLD)
@@ -87,8 +93,25 @@ def count_different_events_in_images(real_images, predicted_images):
         elif predicted_num_monsters>actual_num_monsters:
             imagined_monsters+=predicted_num_monsters-actual_num_monsters
 
+        is_actual_explosion = is_there_a_big_explosion(real_images[i], FIREBALL_THRESHOLD)
+        is_predicted_explosion = is_there_a_big_explosion(predicted_images[i], FIREBALL_THRESHOLD)
+
+        if is_actual_explosion and not is_predicted_explosion:
+            missing_explosions+=1
+        if is_predicted_explosion and not is_actual_explosion:
+            imagined_explosions+=1
+
+        is_actual_wall = is_there_a_wall(real_images[i], WALL_THRESHOLD)
+        is_predicted_wall = is_there_a_wall(predicted_images[i], WALL_THRESHOLD)
+
+        if is_actual_wall and not is_predicted_wall:
+            missing_walls+=1
+        if is_predicted_wall and not is_actual_wall:
+            imagined_walls+=1
+
     return {"missing_fireballs": missing_fireballs, "imagined_fireballs": imagined_fireballs, "missing_monsters":missing_monsters,
-            "imagined_monsters": imagined_monsters}
+            "imagined_monsters": imagined_monsters, "missing_explosions":missing_explosions, "imagined_explosions": imagined_explosions,
+            "missing_walls": missing_walls, "imagined_walls":imagined_walls}
 
 def count_events_on_trained_rnn(trained_vae, trained_rnn, initial_latent_vector, actions, num_timesteps = 100):
     assert(len(actions)>=num_timesteps)
