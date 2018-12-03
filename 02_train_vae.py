@@ -26,6 +26,7 @@ K.set_session(sess)
 
 def main(args):
 
+    input_data_folder = args.input_data_folder
     start_batch = args.start_batch
     max_batch = args.max_batch
     new_model = args.new_model
@@ -36,6 +37,9 @@ def main(args):
     else:
         savefolder = "./models/"
 
+    if not input_data_folder:
+        input_data_folder = "./data/"
+
     if not os.path.exists(savefolder):
         os.makedirs(savefolder)
 
@@ -45,9 +49,13 @@ def main(args):
 
     if not new_model:
         try:
-            vae.set_weights('./vae/weights.h5')
+            # Fetching stored weights and history.
+            vae.set_weights(savefolder+'final_full_vae_weights.h5')
+            history_file = savefolder+'world_model_training_history.h5'
+            with open(history_file, 'rb') as pickle_file:
+                history = pickle.load(pickle_file, encoding='latin1') 
         except:
-            print("Either set --new_model or ensure ./vae/weights.h5 exists")
+            print("Either set --new_model or ensure ./vae/final_full_vae_weights.h5 exists")
             raise
     first_item = True
 
@@ -55,9 +63,9 @@ def main(args):
         print('Building batch {}...'.format(batch_num))
 
         for env_name in config.train_envs:
-            print("Loading data from ", './data_small_episodes/obs_data_' + env_name + '_' + str(batch_num) + '.npy')
+            print("Loading data from ", input_data_folder+'obs_data_' + env_name + '_' + str(batch_num) + '.npy')
             try:
-                new_data = np.load('./data_small_episodes/obs_data_' + env_name + '_' + str(batch_num) + '.npy')
+                new_data = np.load(input_data_folder+'obs_data_' + env_name + '_' + str(batch_num) + '.npy')
                 print("Shape after load: ", new_data.shape)
                 if first_item:
                     print("Initializing data")
@@ -108,6 +116,8 @@ if __name__ == "__main__":
     parser.add_argument('--epochs', type=int, default=1, help='The number of passes through the entire data set.')
     parser.add_argument('--new_model', action='store_true', help='start a new model from scratch?')
     parser.add_argument('--savefolder', type=str, help="Folder to store results in. Default is ./models/")
+    parser.add_argument('--input_data_folder', type=str, help="Folder to load training data from.")
+
     args = parser.parse_args()
 
     main(args)

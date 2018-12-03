@@ -3,13 +3,13 @@ import gym
 from gym.utils import seeding
 from gym import spaces
 
-import doom_py
+#import doom_py
 import tensorflow as tf
 
 from scipy.misc import imresize as resize
 from gym.spaces.box import Box
-from ppaquette_gym_doom.doom_take_cover import DoomTakeCoverEnv
-
+#from ppaquette_gym_doom.doom_take_cover import DoomTakeCoverEnv
+from vizdoomgym.envs import VizdoomTakeCover
 #from doomrnn import reset_graph, model_path_name, model_rnn_size, model_state_space, ConvVAE, Model, hps_sample
 from Constants import model_rnn_size, model_state_space, hps_sample
 
@@ -29,8 +29,8 @@ def _process_frame(frame):
 #Similifying it first just to test the VAE. Consider adding features again later.
 #TODO Clean up here - consider if VAE and RNN needs to be mixed in here.
 
-class DoomTakeCoverWrapper(DoomTakeCoverEnv):
-    def __init__(self, render_mode=False, load_model=True):
+class DoomTakeCoverWrapper(VizdoomTakeCover): #DoomTakeCoverEnv):
+    def __init__(self, render_mode=False): #, load_model=True):
         super(DoomTakeCoverWrapper, self).__init__()
 
         self.no_render = True
@@ -47,12 +47,13 @@ class DoomTakeCoverWrapper(DoomTakeCoverEnv):
         #    self.vae.load_json(os.path.join(model_path_name, 'vae.json'))
         #    self.rnn.load_json(os.path.join(model_path_name, 'rnn.json'))
 
-        self.action_space = spaces.Box(low=-1.0, high=1.0, shape=())
+        #TODO KOEChange
+        #self.action_space = spaces.Box(low=-1.0, high=1.0, shape=())
         self.outwidth = hps_sample.seq_width
         self.obs_size = self.outwidth + model_rnn_size * model_state_space
 
         self.observation_space = Box(low=0, high=255, shape=(SCREEN_Y, SCREEN_X, 3))
-        self.actual_observation_space = spaces.Box(low=-50., high=50., shape=(self.obs_size))
+        self.actual_observation_space = spaces.Box(low=-50., high=50., shape=(self.obs_size,))
 
         #self.zero_state = self.rnn.sess.run(self.rnn.zero_state)
 
@@ -63,7 +64,7 @@ class DoomTakeCoverWrapper(DoomTakeCoverEnv):
         self.restart = None
         self.frame_count = None
         self.viewer = None
-        self._reset()
+        self.reset()
 
     def _step(self, action):
 
@@ -92,17 +93,20 @@ class DoomTakeCoverWrapper(DoomTakeCoverEnv):
         # actual action in wrapped env:
 
         threshold = 0.3333
-        full_action = [0] * 43
+        #full_action = [0] * 43
+        full_action=-1
 
+        #In the new vizdoom, action -1 is stay, 0 is left, 1 is right.
         if action < -threshold:
-            full_action[11] = 1
+            #full_action[11] = 1
+            full_action = 0
 
         if action > threshold:
-            full_action[10] = 1
-
+            #full_action[10] = 1
+            full_action=1
 
         #The obs returned here is full resolution, 480 by 640.
-        obs, reward, done, _ = super(DoomTakeCoverWrapper, self)._step(full_action)
+        obs, reward, done, _ = super(DoomTakeCoverWrapper, self).step(full_action)
         small_obs = _process_frame(obs) #Reduces OBS resolution
         self.current_obs = small_obs
         #self.z = self._encode(small_obs)
@@ -129,7 +133,7 @@ class DoomTakeCoverWrapper(DoomTakeCoverEnv):
     #    return img
 
     def _reset(self):
-        obs = super(DoomTakeCoverWrapper, self)._reset()
+        obs = super(DoomTakeCoverWrapper, self).reset()
         small_obs = _process_frame(obs)
         self.current_obs = small_obs
         #self.rnn_state = self.zero_state
@@ -177,20 +181,21 @@ class DoomTakeCoverWrapper(DoomTakeCoverEnv):
                 if self.viewer is None:
                     self.viewer = rendering.SimpleImageViewer()
                 self.viewer.imshow(img)
-        except doom_py.vizdoom.ViZDoomIsNotRunningException:
+#        except doom_py.vizdoom.ViZDoomIsNotRunningException:
+        except E: 
             pass  # Doom has been closed
 
 def make_env(env_name, seed=-1, render_mode=False):
-  if env_name == 'doomrnn':
-    print('making rnn doom environment')
-    env = DoomTakeCoverWrapper(render_mode=render_mode)
+  #if env_name == 'doomrnn':
+  print('making rnn doom environment')
+  env = DoomTakeCoverWrapper(render_mode=render_mode)
     #Disabling car racing from now
   #elif env_name == 'car_racing':
   #  from custom_envs.car_racing import CarRacing
    # env = CarRacing()
    # if (seed >= 0):
    #   env.seed(seed)
-  else:
-    print("couldn't find this env")
+  #else:
+  #print("couldn't find this env")
 
   return env

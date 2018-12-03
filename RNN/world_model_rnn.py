@@ -1,5 +1,5 @@
 import keras
-
+from keras.callbacks import EarlyStopping
 #Parameters of the MDN-RNN
 import mdn
 

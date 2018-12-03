@@ -13,6 +13,7 @@ import argparse
 #Ha used 10,000 episodes. Minimum length 100, max 2100.
 
 def main(args):
+    print("main")
     env_name = args.env_name
     total_episodes = args.total_episodes
     start_batch = args.start_batch
@@ -26,6 +27,7 @@ def main(args):
     else:
         envs_to_generate = [env_name]
 
+    print("envs:", envs_to_generate)
     for current_env_name in envs_to_generate:
         print("Generating data for env {}".format(current_env_name))
 
@@ -42,7 +44,7 @@ def main(args):
 
             for i_episode in range(batch_size):
                 print('-----')
-                observation = env.reset()
+                observation = env._reset()
                 observation=_process_frame(observation) #Reducing resolution before storing
                 #observation = config.adjust_obs(observation)
 
@@ -67,7 +69,7 @@ def main(args):
                     obs_sequence.append(observation)
                     action_sequence.append(action)
 
-                    observation, reward, done, info = env.step(action)
+                    observation, reward, done, info = env._step(action)
                     #observation = config.adjust_obs(observation)
 
                     if render:
@@ -89,8 +91,8 @@ def main(args):
                 s = s + 1
 
             print("Saving dataset for batch {}".format(batch))
-            np.save('./data/obs_data_' + current_env_name + '_' + str(batch), obs_data)
-            np.save('./data/action_data_' + current_env_name + '_' + str(batch), action_data)
+            np.save('/mnt/data/doom_data_large/obs_data_' + current_env_name + '_' + str(batch), obs_data)
+            np.save('/mnt/data/doom_data_large/action_data_' + current_env_name + '_' + str(batch), action_data)
 
             batch = batch + 1
 
