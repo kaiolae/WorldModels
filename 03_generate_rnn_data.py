@@ -43,9 +43,11 @@ def main(args):
 
     #KOEChange Modified here to avoid memory problems when working with large files.
     #Now, we load 1 file at a time.
-    obs_data = []
-    action_data = []
+    z_sequences = [] #One for each ep
+    action_sequences = [] #One for each ep
     for file_number in range(1,len(glob.glob(obs_file_pattern))+1):
+        obs_data = []
+        action_data = []
         obs_file = os.path.join(obs_folder, obs_filename_base)+str(file_number) + ".npy"
         action_file = os.path.join(obs_folder, actions_filename_base) + str(file_number) + ".npy"
         print("Loading obs file ", obs_file)
@@ -76,8 +78,7 @@ def main(args):
         #TODO Can we wait with storing the z-sequences until the end, or will that fill up memory?
         #Need to store each ep separately. we cant predict btw episodes
         #TODO Note: There are equally many actions and observations. I guess the final action can just be discarded?
-        z_sequences = [] #One for each ep
-        action_sequences = [] #One for each ep
+
         for episode_number in range(len(obs_data)):
             observations = np.array(obs_data[episode_number])
             # Generating all latent codes for this episode
@@ -85,9 +86,9 @@ def main(args):
             z_sequences.append(latent_values)
             action_sequences.append(np.array(action_data[episode_number]))
 
-            print("Added latent sequences of length ", len(latent_values), " and action sequence of length ", len(action_sequences[-1]))
-            print("Array sizes: ", len(z_sequences), ", ", len(action_sequences))
-        z_sequences = np.array(z_sequences) #Will this work? Has sub-arrays of differing lengths.
+        print("Added latent sequences of length ", len(latent_values), " and action sequence of length ", len(action_sequences[-1]))
+        print("Array sizes: ", len(z_sequences), ", ", len(action_sequences))
+    z_sequences = np.array(z_sequences) #Will this work? Has sub-arrays of differing lengths.
 
     np.savez_compressed(os.path.join(savefolder, "rnn_training_data.npz"), action=action_data, latent = z_sequences)
 
