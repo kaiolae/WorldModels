@@ -10,6 +10,7 @@ from env import make_env, _process_frame
 
 import argparse
 
+#Ha used 10,000 episodes. Minimum length 100, max 2100.
 
 def main(args):
     env_name = args.env_name
