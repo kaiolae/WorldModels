@@ -90,8 +90,8 @@ def main(args):
                 s = s + 1
 
             print("Saving dataset for batch {}".format(batch))
-            np.save('data/obs_data_' + current_env_name + '_' + str(batch), obs_data)
-            np.save('data/action_data_' + current_env_name + '_' + str(batch), action_data)
+            np.save('/mnt/data/doom_data_large/obs_data_' + current_env_name + '_' + str(batch), obs_data)
+            np.save('/mnt/data/doom_data_large/action_data_' + current_env_name + '_' + str(batch), action_data)
 
             batch = batch + 1
 
