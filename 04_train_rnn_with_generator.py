@@ -36,6 +36,7 @@ BATCH_SIZE = 256 # Fant ikke Ha's verdi i farta
 
 
 def main(args):
+    skip_ahead = args.skip_ahead
     training_data_file = args.training_data_file
     epochs = args.epochs
     sequence_length = args.sequence_length
@@ -81,8 +82,8 @@ def main(args):
 
     validation_data_start_index = int((1-VAL_SPLIT)*len(observation_data))
     #TODO if desired, set up a validatio data generator too.
-    train_data_generator = KerasBatchGenerator(observation_data[:validation_data_start_index], action_data[:validation_data_start_index], sequence_length, BATCH_SIZE)
-    val_data_generator = KerasBatchGenerator(observation_data[validation_data_start_index:], action_data[validation_data_start_index:], sequence_length, BATCH_SIZE)
+    train_data_generator = KerasBatchGenerator(observation_data[:validation_data_start_index], action_data[:validation_data_start_index], sequence_length, BATCH_SIZE, skip_ahead=skip_ahead)
+    val_data_generator = KerasBatchGenerator(observation_data[validation_data_start_index:], action_data[validation_data_start_index:], sequence_length, BATCH_SIZE, skip_ahead=skip_ahead)
 
 
     #Stops training if val loss stops improving.
@@ -126,6 +127,9 @@ if __name__ == "__main__":
                         default = "run1")
     parser.add_argument('--upper_level_folder_name', type=str, help="Upper level folder to group several runs.",
                         default = "results")
+    parser.add_argument('--skip_ahead', type=int, help="How many steps in the sequence to skip forward between samples.",
+                    default = 5)
+
     args = parser.parse_args()
 
     main(args)

@@ -79,6 +79,7 @@ def main(args):
             continue
         actions = np.array(action_file[i]) #All N actions in an episode
         observations_and_actions = [] #Concatenating for each timestep.
+        print("Obs, action len: ", len(observations), ", ", len(actions))
         for timestep in range(len(observations)):
             observations_and_actions.append(np.concatenate([observations[timestep],[actions[timestep]]]))
         for j in range(0, len(observations) - sequence_length, skip_ahead):
