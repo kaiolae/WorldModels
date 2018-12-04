@@ -6,7 +6,7 @@ import numpy as np
 
 class KerasBatchGenerator(object):
 
-    def __init__(self, observation_data, action_data, sequence_length, batch_size):
+    def __init__(self, observation_data, action_data, sequence_length, batch_size, skip_ahead):
         print("Making generator of size ", len(observation_data))
         #observation_data is an array with shape (num_episodes, num_observations_in_episode, len_observation).
         self.observation_data = []
@@ -32,7 +32,7 @@ class KerasBatchGenerator(object):
         self.data_dict={}
         datacounter = 0
         for episode_num in range(len(self.observation_data)):
-            for step_num in range(len(self.observation_data[episode_num])):
+            for step_num in range(0,len(self.observation_data[episode_num]), skip_ahead):
                 self.data_dict[datacounter] = (episode_num, step_num)
                 datacounter += 1
 
