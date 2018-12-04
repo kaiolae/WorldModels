@@ -95,7 +95,8 @@ def main(args):
     history = rnn.model.fit_generator(train_data_generator.generate(),
                             train_data_generator.get_total_num_train_samples()//BATCH_SIZE,
                             epochs=epochs,
-                            validation_data=val_data_generator.generate(), callbacks=callbacks_list
+                            validation_data=val_data_generator.generate(), callbacks=callbacks_list,
+                            validation_steps = val_data_generator.get_total_num_train_samples()//BATCH_SIZE
                             )
     rnn.save_weights(os.path.join(savefolder,"rnn_trained_model.h5"))
 
