@@ -87,8 +87,11 @@ def main(args):
 
 
     #Stops training if val loss stops improving.
+    checkpoint_callback = keras.callbacks.ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=True, save_weights_only=True, mode='auto', period=1)
+    nan_callback = keras.callbacks.TerminateOnNaN()
     earlystop = EarlyStopping(monitor='val_loss', min_delta=0.0001, patience=5, verbose=1, mode='auto')
-    callbacks_list = [earlystop]
+
+    callbacks_list = [checkpoint_callback, nan_callback]#[earlystop]
 
     #Training the model
     #history = rnn.train(X, y, epochs, BATCH_SIZE, validation_split=VAL_SPLIT)
