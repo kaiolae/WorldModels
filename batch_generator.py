@@ -54,15 +54,16 @@ class KerasBatchGenerator(object):
         data_counter = 0
         while True:
             #A tuple (episode_num, step_num) saying where the current sequence starts.
-            current_episode_num, current_step_num = self.data_dict[self.data_indices[self.current_idx]]
             while x.shape[0] < self.batch_size:
+
+                current_episode_num, current_step_num = self.data_dict[self.data_indices[self.current_idx]]
                 if current_step_num + self.sequence_length +1 >= len(self.observation_data[current_episode_num]):
                     continue #Skipping sequences that are too short.
 
                 current_observations_and_actions = self.observations_and_actions[current_episode_num]
                 current_observations_only = self.observation_data[current_episode_num]
-                x[data_counter, :] = self.current_observations_and_actions[current_step_num:current_step_num + self.sequence_length]
-                y[data_counter, :] = self.current_observations_only[current_step_num+1:current_step_num + self.sequence_length+1]
+                x[data_counter, :] = current_observations_and_actions[current_step_num:current_step_num + self.sequence_length]
+                y[data_counter, :] = current_observations_only[current_step_num+1:current_step_num + self.sequence_length+1]
                 print("Generating data. x shape: ", x.shape)
                 data_counter+=1
                 self.current_idx+=1
