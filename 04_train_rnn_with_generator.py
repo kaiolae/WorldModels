@@ -11,6 +11,8 @@ import sys
 
 import keras
 import numpy as np
+from keras.callbacks import EarlyStopping
+
 import mdn
 from RNN import world_model_rnn
 
@@ -77,15 +79,23 @@ def main(args):
     print("contents: ", observation_data[0][0])
     print("action contents: ", action_data[0][0])
 
+    validation_data_start_index = int((1-VAL_SPLIT)*len(observation_data))
     #TODO if desired, set up a validatio data generator too.
-    train_data_generator = KerasBatchGenerator(observation_data, action_data, sequence_length, BATCH_SIZE)
+    train_data_generator = KerasBatchGenerator(observation_data[:validation_data_start_index], action_data[:validation_data_start_index], sequence_length, BATCH_SIZE)
+    val_data_generator = KerasBatchGenerator(observation_data[validation_data_start_index:], action_data[validation_data_start_index:], sequence_length, BATCH_SIZE)
+
+
+    #Stops training if val loss stops improving.
+    earlystop = EarlyStopping(monitor='val_loss', min_delta=0.0001, patience=5, verbose=1, mode='auto')
+    callbacks_list = [earlystop]
 
     #Training the model
     #history = rnn.train(X, y, epochs, BATCH_SIZE, validation_split=VAL_SPLIT)
     #Training with generator to save memory.
     history = rnn.model.fit_generator(train_data_generator.generate(),
                             train_data_generator.get_total_num_train_samples()//BATCH_SIZE,
-                            epochs=epochs
+                            epochs=epochs,
+                            validation_data=val_data_generator, callbacks=callbacks_list
                             )
     rnn.save_weights(os.path.join(savefolder,"rnn_trained_model.h5"))
 
