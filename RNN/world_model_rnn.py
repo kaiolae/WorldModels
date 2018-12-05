@@ -97,7 +97,13 @@ class RNN():
     def train(self, rnn_input, rnn_output, epochs, batch_size, validation_split=0.2):
         #Stops training if val loss stops improving.
         earlystop = EarlyStopping(monitor='val_loss', min_delta=0.0001, patience=5, verbose=1, mode='auto')
-        callbacks_list = [earlystop]
+
+        #Stops training if val loss stops improving.
+        checkpoint_callback = keras.callbacks.ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=True, save_weights_only=True, mode='auto', period=1)
+        nan_callback = keras.callbacks.TerminateOnNaN()
+
+
+        callbacks_list = [checkpoint_callback, nan_callback]#[earlystop]
         print("RNN input shape ", rnn_input.shape)
         print("RNN output shape ", rnn_output.shape)
 

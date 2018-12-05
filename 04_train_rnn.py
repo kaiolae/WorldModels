@@ -35,6 +35,7 @@ def main(args):
     num_mixtures = args.num_mixtures
     upper_level_folder = args.upper_level_folder_name
     data_scaling_factor = args.data_scaling_factor
+    data_size = args.data_size
 
     if not os.path.exists(upper_level_folder):
         os.makedirs(upper_level_folder)
@@ -48,8 +49,12 @@ def main(args):
 
     #Loading z-values and actions. Expecting a compressed npz-file
     rnn_training_data = np.load(training_data_file)
-    action_file = rnn_training_data['action']
-    latent_file = rnn_training_data['latent']
+    if data_size==-1:
+        action_file = rnn_training_data['action']
+        latent_file = rnn_training_data['latent']
+    else:
+        action_file = rnn_training_data['action'][:data_size]
+        latent_file = rnn_training_data['latent'][:data_size]
 
     rnn = world_model_rnn.RNN(sequence_length=sequence_length, num_mixtures=num_mixtures)
 
@@ -131,6 +136,9 @@ if __name__ == "__main__":
                         default = "results")
     parser.add_argument('--data_scaling_factor', type=float, help="If we want to scale all data by a fixed scalar (may help avoid nans).",
                         default = 1.0)
+
+    parser.add_argument('--data_size', type=int, help="How many of the episodes in the file to train on. Default is all.",
+                        default = -1)
 
     args = parser.parse_args()
 
