@@ -56,7 +56,7 @@ def main(args):
 
                 env.render()
                 done = False
-                action = env.action_space.sample()
+                action = np.random.rand() *2.0 -1.0
                 t = 0
                 obs_sequence = []
                 action_sequence = []
@@ -64,7 +64,6 @@ def main(args):
 
                 while t < time_steps:  # and not done:
                     t = t + 1
-                    #Ha's actions from doom extractor.
                     if t % repeat == 0:
                         action = np.random.rand() * 2.0 - 1.0
                         repeat = np.random.randint(1, 11)
@@ -73,7 +72,6 @@ def main(args):
                     action_sequence.append(action)
 
                     observation, reward, done, info = env._step(action)
-                    #observation = config.adjust_obs(observation)
 
                     if render:
                         env.render()
