@@ -140,7 +140,7 @@ class DoomTakeCoverWrapper(VizdoomTakeCover): #DoomTakeCoverEnv):
         #self.z = self._encode(small_obs)
         self.restart = 1
         self.frame_count = 0
-        return obs
+        return small_obs
         #return self._current_state()
 
     #def _current_state(self):
