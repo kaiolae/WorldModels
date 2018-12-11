@@ -16,11 +16,13 @@ print(nb_dir)
 if nb_dir not in sys.path:
     sys.path.append(nb_dir)
 
+import random
 #Importing the VAE
 from VAE.world_model_vae import VAE
 from RNN.world_model_rnn import RNN
 import numpy as np
 
+CHANGE_ACTION_PROB = 0.1
 LATENT_SPACE_DIMENSIONALITY = 64
 RNN_SIZE = 512
 VAE_PATH = "/home/kaiolae/code/word_models_keras_test/WorldModels/dec6_models/final_full_vae_weights.h5"
@@ -43,8 +45,6 @@ def sample_from_one_specific_mixture(mdn, mixture_number, params, output_dim, to
     sample = np.random.multivariate_normal(mus_vector, cov_matrix, 1)
     return sample
 
-def generate_random_action():
-    return random.uniform(-1.0,1.0)
 
 class RNNAnalyzer:
 
@@ -61,10 +61,17 @@ class RNNAnalyzer:
         self.temperature = temperature
         self.ioscaling = io_scaling
 
+        self.prev_action = 0
 
     def _reset(self):
         self.rnn.set_weights(self.last_loaded_from)
         self.z = None
+
+    def generate_random_action():
+        #Generates random actions with a high probability of repeating the previous one.
+        if random.random()<CHANGE_ACTION_PROB:
+            self.prev_action = random.uniform(-1.0,1.0)
+        return self.prev_action
 
 
     def decode_with_vae(self, latent_vector_sequence):
@@ -84,7 +91,7 @@ class RNNAnalyzer:
         #actual training.
         latent_vector = np.multiply(single_latent_vector, self.ioscaling)
 
-        predicted_latent, _ = self.predict_one_step(random_action, latent_vector)
+        predicted_latent, _ = self.predict_one_step(generate_random_action(), latent_vector)
         for i in range(warm_up_steps):
             random_action = generate_random_action()
             predicted_latent, _ = self.predict_one_step(random_action, predicted_latent)
