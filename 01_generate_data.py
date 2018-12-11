@@ -6,8 +6,8 @@ import random
 import config
 # import matplotlib.pyplot as plt
 
-from env import make_env, _process_frame
-
+from env import make_env
+import os
 import argparse
 
 #Ha used 10,000 episodes. Minimum length 100, max 2100.
@@ -21,6 +21,10 @@ def main(args):
     render = args.render
     batch_size = args.batch_size
     run_all_envs = args.run_all_envs
+
+    store_folder = args.store_folder
+    if not os.path.exists(store_folder):
+        os.makedirs(store_folder)
 
     if run_all_envs:
         envs_to_generate = config.train_envs
@@ -45,7 +49,6 @@ def main(args):
             for i_episode in range(batch_size):
                 print('-----')
                 observation = env._reset()
-                observation=_process_frame(observation) #Reducing resolution before storing
                 #observation = config.adjust_obs(observation)
 
                 # plt.imshow(observation)
@@ -53,7 +56,7 @@ def main(args):
 
                 env.render()
                 done = False
-                action = env.action_space.sample()
+                action = np.random.rand() *2.0 -1.0
                 t = 0
                 obs_sequence = []
                 action_sequence = []
@@ -61,7 +64,6 @@ def main(args):
 
                 while t < time_steps:  # and not done:
                     t = t + 1
-                    #Ha's actions from doom extractor.
                     if t % repeat == 0:
                         action = np.random.rand() * 2.0 - 1.0
                         repeat = np.random.randint(1, 11)
@@ -70,7 +72,6 @@ def main(args):
                     action_sequence.append(action)
 
                     observation, reward, done, info = env._step(action)
-                    #observation = config.adjust_obs(observation)
 
                     if render:
                         env.render()
@@ -91,8 +92,8 @@ def main(args):
                 s = s + 1
 
             print("Saving dataset for batch {}".format(batch))
-            np.save('/mnt/data/doom_data_large/obs_data_' + current_env_name + '_' + str(batch), obs_data)
-            np.save('/mnt/data/doom_data_large/action_data_' + current_env_name + '_' + str(batch), action_data)
+            np.save(store_folder+'/obs_data_' + current_env_name + '_' + str(batch), obs_data)
+            np.save(store_folder+'/action_data_' + current_env_name + '_' + str(batch), action_data)
 
             batch = batch + 1
 
@@ -102,9 +103,10 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=('Create new training data'))
     parser.add_argument('env_name', type=str, help='name of environment')
+    parser.add_argument('--store_folder', type=str, help='where to store rollouts')
     parser.add_argument('--total_episodes', type=int, default=200, help='total number of episodes to generate')
     parser.add_argument('--start_batch', type=int, default=0, help='start_batch number')
-    parser.add_argument('--time_steps', type=int, default=300, help='how many timesteps at start of episode?')
+    parser.add_argument('--time_steps', type=int, default=2100, help='how many timesteps at start of episode?')
     parser.add_argument('--render', action='store_true', help='render the env as data is generated')
     parser.add_argument('--batch_size', type=int, default=200, help='how many episodes in a batch (one file)')
     parser.add_argument('--run_all_envs', action='store_true',

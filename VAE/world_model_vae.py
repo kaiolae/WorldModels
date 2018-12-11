@@ -19,7 +19,7 @@ epsilon_std = 1.0
 epochs = 50
 filters = 32
 num_conv = 3
-batch_size = 256
+batch_size = 100
 
 img_size = (img_rows, img_cols, img_chns)
 original_dim = img_rows * img_cols * img_chns
