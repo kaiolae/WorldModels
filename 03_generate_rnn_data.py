@@ -45,7 +45,7 @@ def main(args):
     #Now, we load 1 file at a time.
     z_sequences = [] #One for each ep
     action_sequences = [] #One for each ep
-    for file_number in range(1,len(glob.glob(obs_file_pattern))+1):
+    for file_number in range(0,len(glob.glob(obs_file_pattern))):
         obs_data = []
         action_data = []
         obs_file = os.path.join(obs_folder, obs_filename_base)+str(file_number) + ".npy"
@@ -85,12 +85,13 @@ def main(args):
             latent_values = vae.generate_latent_variables(observations)
             z_sequences.append(latent_values)
             action_sequences.append(np.array(action_data[episode_number]))
+       
 
-        print("Added latent sequences of length ", len(latent_values), " and action sequence of length ", len(action_sequences[-1]))
-        print("Array sizes: ", len(z_sequences), ", ", len(action_sequences))
+            #print("Added latent sequences of length ", len(latent_values), " and action sequence of length ", len(action_sequences[-1]))
+            #print("Array sizes: ", len(z_sequences), ", ", len(action_sequences))
     z_sequences = np.array(z_sequences) #Will this work? Has sub-arrays of differing lengths.
-
-    np.savez_compressed(os.path.join(savefolder, "rnn_training_data.npz"), action=action_data, latent = z_sequences)
+    action_sequences = np.array(action_sequences)
+    np.savez_compressed(os.path.join(savefolder, "rnn_training_data.npz"), action=action_sequences, latent = z_sequences)
 
 
 if __name__ == "__main__":

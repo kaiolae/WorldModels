@@ -13,6 +13,13 @@ import numpy as np
 import mdn
 from RNN import world_model_rnn
 
+import os
+os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
+# The GPU id to use, usually either "0" or "1"
+os.environ["CUDA_VISIBLE_DEVICES"]="0" #TODO Move to 0. 
+ 
+# Do other imports now...
+import keras
 import tensorflow as tf
 tf_config = tf.ConfigProto()
 tf_config.gpu_options.allow_growth = True
@@ -102,7 +109,7 @@ def main(args):
     print("X shape: ", X.shape)
     print("y shape: ", y.shape)
     #Training the model
-    history = rnn.train(X, y, epochs, BATCH_SIZE, validation_split=VAL_SPLIT)
+    history = rnn.train(X, y, epochs, BATCH_SIZE, savefolder, validation_split=VAL_SPLIT)
     rnn.save_weights(os.path.join(savefolder,"rnn_trained_model.h5"))
 
     # save training history

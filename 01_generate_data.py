@@ -93,6 +93,7 @@ def main(args):
 
             print("Saving dataset for batch {}".format(batch))
             np.save(store_folder+'/obs_data_' + current_env_name + '_' + str(batch), obs_data)
+            print("Saving actions for batch {}".format(batch))
             np.save(store_folder+'/action_data_' + current_env_name + '_' + str(batch), action_data)
 
             batch = batch + 1
