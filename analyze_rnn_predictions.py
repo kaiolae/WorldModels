@@ -43,6 +43,8 @@ def sample_from_one_specific_mixture(mdn, mixture_number, params, output_dim, to
     sample = np.random.multivariate_normal(mus_vector, cov_matrix, 1)
     return sample
 
+def generate_random_action():
+    return random.uniform(-1.0,1.0)
 
 class RNNAnalyzer:
 
@@ -74,6 +76,18 @@ class RNNAnalyzer:
         latent_vectors = np.multiply(latent_vectors, self.ioscaling)
         for i in range(latent_vectors.shape[0]):
             self.predict_one_step(actions[i], latent_vectors[i])
+
+
+    def warm_up_lstm_with_single_input(self, single_latent_vector, warm_up_steps):
+        #Warms up the LSTM with self-generated data. In effect, this just discards the initial frames
+        #when we later measure something - since these unconditioned frames are not representattive of the
+        #actual training.
+        latent_vector = np.multiply(single_latent_vector, self.ioscaling)
+
+        predicted_latent, _ = self.predict_one_step(random_action, latent_vector)
+        for i in range(warm_up_steps):
+            random_action = generate_random_action()
+            predicted_latent, _ = self.predict_one_step(random_action, predicted_latent)
 
     #TODO Before using these predictions, perhaps I need to condition it for 60 timesteps first, to get it into a good state?
     def predict_one_step(self, action, previous_z=[], sigma_temp = 1.0, force_prediction_from_mixture = -1):
