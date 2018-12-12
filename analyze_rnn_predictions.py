@@ -22,10 +22,41 @@ from VAE.world_model_vae import VAE
 from RNN.world_model_rnn import RNN
 import numpy as np
 
+import matplotlib.pyplot as plt
+from matplotlib import animation
+from IPython.display import display, HTML
+
 CHANGE_ACTION_PROB = 0.1
 LATENT_SPACE_DIMENSIONALITY = 64
 RNN_SIZE = 512
 VAE_PATH = "/home/kaiolae/code/word_models_keras_test/WorldModels/dec6_models/final_full_vae_weights.h5"
+
+###Helper methods for post-processing and analyses.
+
+def get_random_starting_sequence(obs_data, action_data, minimal_length=100):
+    #Gets a random sequence for starting dreams with real data (note: I usually don't do this - only for some
+    #specific tests).
+    rand_seq_id = random.randint(0,len(obs_data))
+    rand_seq = obs_data[rand_seq_id]
+    while len(rand_seq) < minimal_length:
+        rand_seq_id = random.randint(0,len(observation_data))
+        rand_seq = observation_data[rand_seq_id]
+    return observation_data[rand_seq_id], action_data[rand_seq_id]
+
+def plot_movie_mp4(image_array):
+    dpi = 2.0
+    xpixels, ypixels = image_array[0].shape[0], image_array[0].shape[1]
+    fig = plt.figure(figsize=(ypixels/dpi, xpixels/dpi), dpi=dpi)
+    #fig = plt.figure(figsize=(1,1), dpi=dpi)
+    im = plt.figimage(image_array[0])
+
+    def animate(i):
+        im.set_array(image_array[i])
+        return (im,)
+
+    anim = animation.FuncAnimation(fig, animate, frames=len(image_array))
+    display(HTML(anim.to_html5_video()))
+
 
 def softmax(w, t=1.0):
     """Softmax function for a list or numpy array of logits. Also adjusts temperature."""
@@ -44,6 +75,7 @@ def sample_from_one_specific_mixture(mdn, mixture_number, params, output_dim, to
     cov_matrix = np.identity(output_dim) * sig_vector
     sample = np.random.multivariate_normal(mus_vector, cov_matrix, 1)
     return sample
+
 
 
 class RNNAnalyzer:
@@ -66,6 +98,10 @@ class RNNAnalyzer:
     def _reset(self):
         self.rnn.set_weights(self.last_loaded_from)
         self.z = None
+
+    #Decode a sequence with the VAE and visualize it
+    def decode_and_visualize(latent_vector_sequence):
+        plot_movie_mp4(self.decode_with_vae(latent_vector_sequence))
 
     def generate_random_action(self):
         #Generates random actions with a high probability of repeating the previous one.
