@@ -103,7 +103,7 @@ class RNNAnalyzer:
     def decode_and_visualize(latent_vector_sequence):
         plot_movie_mp4(self.decode_with_vae(latent_vector_sequence))
 
-    def generate_random_action():
+    def generate_random_action(self):
         #Generates random actions with a high probability of repeating the previous one.
         if random.random()<CHANGE_ACTION_PROB:
             self.prev_action = random.uniform(-1.0,1.0)
@@ -127,9 +127,9 @@ class RNNAnalyzer:
         #actual training.
         latent_vector = np.multiply(single_latent_vector, self.ioscaling)
 
-        predicted_latent, _ = self.predict_one_step(generate_random_action(), latent_vector)
+        predicted_latent, _ = self.predict_one_step(self.generate_random_action(), latent_vector)
         for i in range(warm_up_steps):
-            random_action = generate_random_action()
+            random_action = self.generate_random_action()
             predicted_latent, _ = self.predict_one_step(random_action, predicted_latent)
 
     #TODO Before using these predictions, perhaps I need to condition it for 60 timesteps first, to get it into a good state?
