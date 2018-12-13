@@ -3,8 +3,9 @@ from scipy import ndimage
 import numpy as np
 
 MONSTERS_THRESHOLD = 0.23
-EXPLOSION_THRESHOLD = 0.45 #TODO May need some work here on the auto detection
-FIREBALL_EDGE_THRESHOLD = 0.22 #Reliably separates fireballs from other items - only they have this strong edges.
+#EXPLOSION_THRESHOLD = 0.45 #TODO May need some work here on the auto detection
+#FIREBALL_EDGE_THRESHOLD = 0.22 #Reliably separates fireballs from other items - only they have this strong edges.
+FIREBALL_THRESHOLD = 0.65
 
 #TODO Maybe for walls, we should average a larger area rather than just measure one pixel?
 
@@ -22,14 +23,23 @@ def count_objects(input_image, threshold, above_threshold=True):
 def count_monsters(img):
     return count_objects(img, MONSTERS_THRESHOLD, above_threshold=False)
 
-def count_fireballs(img):
+def count_fireballs_edge(img):
     im = color.rgb2gray(one_image)
     edge_roberts = filtes.roberts(im) #Roberts edge detection
 
     #Only strong edges give result
     return count_objects(edge_roberts, FIREBALL_EDGE_THRESHOLD)
 
-def is_there_a_big_explosion(input_image, fireball_threshold):
+def count_fireballs(img):
+    return count_objects(img, FIREBALL_THRESHOLD)
+
+
+def is_there_a_big_explosion(input_image):
+    #Explosions are the only bright items in the top half of the image - fireballs never go up there.
+    top_half=img[:32,:,:]
+    return count_objects(top_half, FIREBALL_THRESHOLD)>0
+
+def is_there_a_big_explosion_deprecated(input_image, fireball_threshold):
     # Classifies whether there is currently a big fireball exploding in the image.
     # Defined here as having an explosion covering more than 10% of the pixels.
     im = color.rgb2gray(input_image)
