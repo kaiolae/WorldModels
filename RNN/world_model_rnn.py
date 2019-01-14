@@ -94,11 +94,12 @@ class RNN():
     def set_weights(self, filepath):
         self.model.load_weights(filepath)
 
-    def train(self, rnn_input, rnn_output, epochs, batch_size, validation_split=0.2):
+    def train(self, rnn_input, rnn_output, epochs, batch_size, savefolder, validation_split=0.2):
         #Stops training if val loss stops improving.
         earlystop = EarlyStopping(monitor='val_loss', min_delta=0.0001, patience=5, verbose=1, mode='auto')
 
         #Stops training if val loss stops improving.
+        filepath=savefolder+"/weights-improvement-{epoch:02d}-{val_loss:.2f}.hdf5"
         checkpoint_callback = keras.callbacks.ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=True, save_weights_only=True, mode='auto', period=1)
         nan_callback = keras.callbacks.TerminateOnNaN()
 

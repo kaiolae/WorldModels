@@ -7,7 +7,7 @@ import numpy as np
 class KerasBatchGenerator(object):
 
     def __init__(self, observation_data, action_data, sequence_length, batch_size, skip_ahead):
-        print("Making generator of size ", len(observation_data))
+        #print("Making generator of size ", len(observation_data))
         #observation_data is an array with shape (num_episodes, num_observations_in_episode, len_observation).
         self.observation_data = []
         self.observations_and_actions = []
@@ -16,13 +16,15 @@ class KerasBatchGenerator(object):
                 continue
             else:
                 self.observation_data.append(observation_data[episode_num])
+                #print("Adding obs data of size ", len(self.observation_data[-1]))
                 observation_and_action_sequence = []
-                for step_num in range(len(self.observation_data[episode_num])):
+                for step_num in range(len(observation_data[episode_num])):
                     observation_with_action = copy.deepcopy(observation_data[episode_num][step_num])
                     observation_with_action = np.append(observation_with_action,action_data[episode_num][step_num])
                     observation_and_action_sequence.append(observation_with_action)
                 self.observations_and_actions.append(observation_and_action_sequence)
-
+                #print("adding obs and actions of len", len(self.observations_and_actions[-1]))
+        #print("added total of ", len(self.observation_data), " sequences")
         assert(len(self.observation_data) > 0)
         self.sequence_length = sequence_length
         self.batch_size = batch_size
@@ -34,6 +36,7 @@ class KerasBatchGenerator(object):
         for episode_num in range(len(self.observation_data)):
             for step_num in range(0,len(self.observation_data[episode_num]), skip_ahead):
                 self.data_dict[datacounter] = (episode_num, step_num)
+                #print("inserting in data dict ", datacounter, ": ", episode_num, ",", step_num)
                 datacounter += 1
 
         # this will track the progress of the batches sequentially through the
@@ -44,6 +47,7 @@ class KerasBatchGenerator(object):
         #Random shuffling is important, to get stochastic gradient descent right.
         self.data_indices = np.arange(0,datacounter)
         np.random.shuffle(self.data_indices)
+        #print("data indices are ", self.data_indices)
 
     def get_total_num_train_samples(self):
         return self.data_indices.size
@@ -51,22 +55,28 @@ class KerasBatchGenerator(object):
     def generate(self):
         x = np.zeros((self.batch_size, self.sequence_length, len(self.observations_and_actions[0][0])))
         y = np.zeros((self.batch_size, self.sequence_length, len(self.observation_data[0][0])))
-        data_counter = 0
         while True:
             #A tuple (episode_num, step_num) saying where the current sequence starts.
-            while x.shape[0] < self.batch_size:
+            data_counter = 0
+            while data_counter<self.batch_size:
 
                 current_episode_num, current_step_num = self.data_dict[self.data_indices[self.current_idx]]
                 if current_step_num + self.sequence_length +1 >= len(self.observation_data[current_episode_num]):
+                    self.current_idx+=1
+                    if self.current_idx >= len(self.data_indices):
+                        self.current_idx=0 #Epoch done. Wrapping back to beginning of dataset.
                     continue #Skipping sequences that are too short.
 
                 current_observations_and_actions = self.observations_and_actions[current_episode_num]
                 current_observations_only = self.observation_data[current_episode_num]
                 x[data_counter, :] = current_observations_and_actions[current_step_num:current_step_num + self.sequence_length]
                 y[data_counter, :] = current_observations_only[current_step_num+1:current_step_num + self.sequence_length+1]
-                print("Generating data. x shape: ", x.shape)
+                #print("Generating data. x shape: ", x.shape)
                 data_counter+=1
                 self.current_idx+=1
                 if self.current_idx >= len(self.data_indices):
                     self.current_idx=0 #Epoch done. Wrapping back to beginning of dataset.
+            #print("Wanted x to be: ", current_observations_and_actions[current_step_num:current_step_num + self.sequence_length])
+            #print("x1 is :", x[0][1])
+            #print("y0 is :", y[0][0])
             yield x, y

@@ -39,9 +39,9 @@ def get_random_starting_sequence(obs_data, action_data, minimal_length=100):
     rand_seq_id = random.randint(0,len(obs_data))
     rand_seq = obs_data[rand_seq_id]
     while len(rand_seq) < minimal_length:
-        rand_seq_id = random.randint(0,len(observation_data))
-        rand_seq = observation_data[rand_seq_id]
-    return observation_data[rand_seq_id], action_data[rand_seq_id]
+        rand_seq_id = random.randint(0,len(obs_data))
+        rand_seq = obs_data[rand_seq_id]
+    return obs_data[rand_seq_id], action_data[rand_seq_id]
 
 def plot_movie_mp4(image_array):
     dpi = 2.0
@@ -100,7 +100,7 @@ class RNNAnalyzer:
         self.z = None
 
     #Decode a sequence with the VAE and visualize it
-    def decode_and_visualize(latent_vector_sequence):
+    def decode_and_visualize(self, latent_vector_sequence):
         plot_movie_mp4(self.decode_with_vae(latent_vector_sequence))
 
     def generate_random_action(self):

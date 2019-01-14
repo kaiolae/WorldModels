@@ -19,13 +19,13 @@ def count_events_from_images(image_sequence):
     current_consecutive_explosion_images_counter = 0
     current_consecutive_non_explosion_images_counter = 0
     for img in image_sequence:
-        fb, thresholded_image = count_fireballs(img, FIREBALL_THRESHOLD)
+        fb, thresholded_image = count_fireballs(img)
         thresholded_images.append(thresholded_image)
 
         num_fireballs+=fb
 
         monsters, thresholded_imgage2 = count_monsters(img)
-        is_exploding = is_there_a_big_explosion(img, FIREBALL_THRESHOLD)
+        is_exploding = is_there_a_big_explosion(img)
         if is_exploding:
             current_consecutive_explosion_images_counter +=1
             current_consecutive_non_explosion_images_counter =0
@@ -78,8 +78,8 @@ def count_different_events_in_images(real_images, predicted_images):
     imagined_explosions = 0
     imagined_walls = 0
     for i in range(len(real_images)):
-        actual_num_fireballs, img = count_fireballs(real_images[i], FIREBALL_THRESHOLD)
-        predicted_num_fireballs, thresholded_image = count_fireballs(predicted_images[i],FIREBALL_THRESHOLD)
+        actual_num_fireballs, img = count_fireballs(real_images[i])
+        predicted_num_fireballs, thresholded_image = count_fireballs(predicted_images[i])
 
         if actual_num_fireballs>predicted_num_fireballs:
             missing_fireballs+=actual_num_fireballs-predicted_num_fireballs
@@ -93,8 +93,8 @@ def count_different_events_in_images(real_images, predicted_images):
         elif predicted_num_monsters>actual_num_monsters:
             imagined_monsters+=predicted_num_monsters-actual_num_monsters
 
-        is_actual_explosion = is_there_a_big_explosion(real_images[i], FIREBALL_THRESHOLD)
-        is_predicted_explosion = is_there_a_big_explosion(predicted_images[i], FIREBALL_THRESHOLD)
+        is_actual_explosion = is_there_a_big_explosion(real_images[i])
+        is_predicted_explosion = is_there_a_big_explosion(predicted_images[i])
 
         if is_actual_explosion and not is_predicted_explosion:
             missing_explosions+=1
