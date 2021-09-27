@@ -11,19 +11,22 @@ import argparse
 import numpy as np
 import glob
 
+os.environ["CUDA_VISIBLE_DEVICES"]="7"#"5,6,7,8"
+
 import tensorflow as tf
-tf_config = tf.ConfigProto()
+tf.compat.v1.disable_eager_execution()
+tf_config = tf.compat.v1.ConfigProto()
 tf_config.gpu_options.allow_growth = True
-sess = tf.Session(config=tf_config)
-from keras import backend as K
+sess = tf.compat.v1.Session(config=tf_config)
+import tensorflow.compat.v1.keras.backend as K
 K.set_session(sess)
 
 def main(args):
     obs_folder = args.obs_folder
     #Checking that input folder exists and is not empty.
     assert(os.path.exists(obs_folder) and len(os.listdir(obs_folder)) != 0)
-    obs_filename_base = 'obs_data_doomrnn_'
-    actions_filename_base = 'action_data_doomrnn_'
+    obs_filename_base = 'obs_data_Skiing-v0_'
+    actions_filename_base = 'action_data_Skiing-v0_'
     obs_file_pattern = os.path.join(obs_folder,obs_filename_base+'*')
     action_file_pattern = os.path.join(obs_folder,actions_filename_base+'*')
     print("Obs file pattern: ", obs_file_pattern)
@@ -51,10 +54,10 @@ def main(args):
         obs_file = os.path.join(obs_folder, obs_filename_base)+str(file_number) + ".npy"
         action_file = os.path.join(obs_folder, actions_filename_base) + str(file_number) + ".npy"
         print("Loading obs file ", obs_file)
-        for episode in np.load(obs_file):
+        for episode in np.load(obs_file,allow_pickle=True):
             obs_data.append(episode)
         print("loading action file ", action_file)
-        for episode in np.load(action_file):
+        for episode in np.load(action_file,allow_pickle=True):
             action_data.append(episode)
 
         obs_data = np.array(obs_data)

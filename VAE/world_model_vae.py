@@ -1,16 +1,17 @@
 import os
 
 import numpy as np
-from keras.callbacks import ModelCheckpoint
 
-from keras.layers import Input, Dense, Lambda, Flatten, Reshape, Layer
-from keras.layers import Conv2D, Conv2DTranspose
-from keras.models import Model
-from keras import backend as K
-from keras import metrics
-from keras.datasets import cifar10
-from keras import layers
-import keras
+from tensorflow import keras
+from tensorflow.keras.callbacks import ModelCheckpoint
+
+from tensorflow.keras.layers import Input, Dense, Lambda, Flatten, Reshape, Layer
+from tensorflow.keras.layers import Conv2D, Conv2DTranspose
+from tensorflow.keras.models import Model
+from tensorflow.keras import backend as K
+from tensorflow.keras import metrics
+from tensorflow.keras.datasets import cifar10
+from tensorflow.keras import layers
 
 img_rows, img_cols, img_chns = 64, 64, 3
 latent_dim = 64

@@ -9,18 +9,18 @@ import os
 from VAE.world_model_vae import VAE
 import argparse
 import numpy as np
-import config
 import pickle
 
 # Only for GPU use:
-#import os
-#os.environ["CUDA_VISIBLE_DEVICES"]="0"
+import os
+os.environ["CUDA_VISIBLE_DEVICES"]="7"#"5,6,7,8"
 
 import tensorflow as tf
-tf_config = tf.ConfigProto()
+tf.compat.v1.disable_eager_execution()
+tf_config = tf.compat.v1.ConfigProto()
 tf_config.gpu_options.allow_growth = True
-sess = tf.Session(config=tf_config)
-from keras import backend as K
+sess = tf.compat.v1.Session(config=tf_config)
+import tensorflow.compat.v1.keras.backend as K
 K.set_session(sess)
 
 
@@ -61,29 +61,33 @@ def main(args):
 
     for batch_num in range(start_batch, max_batch + 1):
         print('Building batch {}...'.format(batch_num))
-
-        for env_name in config.train_envs:
-            print("Loading data from ", input_data_folder+'obs_data_' + env_name + '_' + str(batch_num) + '.npy')
-            try:
-                new_data = np.load(input_data_folder+'obs_data_' + env_name + '_' + str(batch_num) + '.npy')
-                print("Shape after load: ", new_data.shape)
-                if first_item:
-                    print("Initializing data")
-                    data = new_data
-                    first_item = False
-                else:
-                    print("concatenating")
-                    data = np.concatenate([data, new_data])
-                    print("Shape after concat: ", data.shape)
-                print('Found {}...current data size = {} episodes'.format(env_name, len(data)))
-            except:
-                pass
+        if args.environment_name:
+            env_name = args.environment_name
+        else:
+            env_name="doomrnn"
+        print("Loading data from ", input_data_folder+'obs_data_' + env_name + '_' + str(batch_num) + '.npy')
+        try:
+            new_data = np.load(input_data_folder+'obs_data_' + env_name + '_' + str(batch_num) + '.npy',allow_pickle=True)
+            print("Shape after load: ", new_data.shape)
+            if first_item:
+                print("Initializing data")
+                data = new_data
+                first_item = False
+            else:
+                print("concatenating")
+                data = np.concatenate([data, new_data])
+                print("Shape after concat: ", data.shape)
+            print('Found {}...current data size = {} episodes'.format(env_name, len(data)))
+        except:
+            pass
 
     if first_item == False:  # i.e. data has been found for this batch number
         # Putting all images into one large 4D numpy array (img nr, width, height, color channels)
+        print("Combining all data") 
         data_as_numpy = np.array(data[0])
         counter = 0
         for d in data:
+            print("Data concatenated: ", counter, " of ", data.shape)
             if counter != 0:
                 data_as_numpy = np.concatenate((data_as_numpy, np.array(d)))
             counter += 1
@@ -117,6 +121,7 @@ if __name__ == "__main__":
     parser.add_argument('--new_model', action='store_true', help='start a new model from scratch?')
     parser.add_argument('--savefolder', type=str, help="Folder to store results in. Default is ./models/")
     parser.add_argument('--input_data_folder', type=str, help="Folder to load training data from.")
+    parser.add_argument('--environment_name', type=str, help="Name of the environment data was generated from")
 
     args = parser.parse_args()
 
