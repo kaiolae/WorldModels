@@ -6,11 +6,21 @@ import random
 import config
 # import matplotlib.pyplot as plt
 
-from env import make_env
+from envcar import make_env #For Doom: Import from env instead
 import os
 import argparse
-
+from cv2 import resize
 #Ha used 10,000 episodes. Minimum length 100, max 2100.
+
+SCREEN_X = 64
+SCREEN_Y = 64
+
+def _process_frame(frame):
+  obs = np.array(frame[0:400, :, :]).astype(np.float)/255.0
+  obs = np.array(resize(obs, (SCREEN_Y, SCREEN_X)))
+  obs = ((1.0 - obs) * 255).round().astype(np.uint8)
+  return obs
+
 
 def main(args):
     print("main")
@@ -18,7 +28,7 @@ def main(args):
     total_episodes = args.total_episodes
     start_batch = args.start_batch
     time_steps = args.time_steps
-    render = args.render
+    render = False #args.render
     batch_size = args.batch_size
     run_all_envs = args.run_all_envs
 
@@ -48,7 +58,7 @@ def main(args):
 
             for i_episode in range(batch_size):
                 print('-----')
-                observation = env._reset()
+                observation = env.reset()
                 #observation = config.adjust_obs(observation)
 
                 # plt.imshow(observation)
@@ -64,14 +74,21 @@ def main(args):
 
                 while t < time_steps:  # and not done:
                     t = t + 1
-                    if t % repeat == 0:
-                        action = np.random.rand() * 2.0 - 1.0
+                    if t==1 or t % repeat == 0:
+                        #action = np.random.rand() * 2.0 - 1.0
+                        #For Doom, the action above is correct. For carracing action has 3 numbers
+                        steer_action = np.random.rand()*2.0-1.0
+                        gas_action = np.random.rand()-0.5
+                        brake_action = np.random.rand()-0.5
                         repeat = np.random.randint(1, 11)
-
-                    obs_sequence.append(observation)
+                    action=np.array([steer_action, gas_action, brake_action])
                     action_sequence.append(action)
 
-                    observation, reward, done, info = env._step(action)
+                    observation, reward, done, info = env.step(action)
+                    observation = _process_frame(observation)
+
+                    obs_sequence.append(np.array(observation))
+
 
                     if render:
                         env.render()
@@ -83,8 +100,8 @@ def main(args):
                 print("dead at", t, "total recorded frames for this worker", total_frames)
 
 
-                obs_data.append(obs_sequence)
-                action_data.append(action_sequence)
+                obs_data.append(np.array(obs_sequence))
+                action_data.append(np.array(action_sequence))
 
                 print("Batch {} Episode {} finished after {} timesteps".format(batch, i_episode, t + 1))
                 print("Current dataset contains {} observations".format(sum(map(len, obs_data))))

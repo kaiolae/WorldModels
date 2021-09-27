@@ -4,12 +4,26 @@ cpmpercussion: Charles Martin (University of Oslo) 2018
 https://github.com/cpmpercussion/keras-mdn-layer
 Hat tip to [Omimo's Keras MDN layer](https://github.com/omimo/Keras-MDN) for a starting point for this code.
 """
-import keras
-from keras import backend as K
-from keras.layers import Dense
-from keras.engine.topology import Layer
-import numpy as np
+
+
+import os
+os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
+# The GPU id to use, usually either "0" or "1"
+os.environ["CUDA_VISIBLE_DEVICES"]="7" #TODO Move to 0. 
+
+
 import tensorflow as tf
+tf.compat.v1.disable_eager_execution()
+tf_config = tf.compat.v1.ConfigProto()
+tf_config.gpu_options.allow_growth = True
+sess = tf.compat.v1.Session(config=tf_config)
+import tensorflow.compat.v1.keras.backend as K
+K.set_session(sess)
+
+from tensorflow.compat.v1 import keras
+from tensorflow.compat.v1.keras.layers import Dense
+from tensorflow.compat.v1.keras.layers import Layer
+import numpy as np
 import tensorflow_probability as tfp
 tfd = tfp.distributions
 
@@ -40,8 +54,8 @@ class MDN(Layer):
         self.mdn_mus.build(input_shape)
         self.mdn_sigmas.build(input_shape)
         self.mdn_pi.build(input_shape)
-        self.trainable_weights = self.mdn_mus.trainable_weights + self.mdn_sigmas.trainable_weights + self.mdn_pi.trainable_weights
-        self.non_trainable_weights = self.mdn_mus.non_trainable_weights + self.mdn_sigmas.non_trainable_weights + self.mdn_pi.non_trainable_weights
+        self._trainable_weights = self.mdn_mus._trainable_weights + self.mdn_sigmas._trainable_weights + self.mdn_pi._trainable_weights
+        self._non_trainable_weights = self.mdn_mus._non_trainable_weights + self.mdn_sigmas._non_trainable_weights + self.mdn_pi._non_trainable_weights
         super(MDN, self).build(input_shape)
 
     def call(self, x, mask=None):

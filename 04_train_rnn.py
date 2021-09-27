@@ -8,7 +8,6 @@ import argparse
 import os
 import pickle
 
-import keras
 import numpy as np
 import mdn
 from RNN import world_model_rnn
@@ -16,18 +15,18 @@ from RNN import world_model_rnn
 import os
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
 # The GPU id to use, usually either "0" or "1"
-os.environ["CUDA_VISIBLE_DEVICES"]="0" #TODO Move to 0. 
- 
-# Do other imports now...
-import keras
-import tensorflow as tf
-tf_config = tf.ConfigProto()
-tf_config.gpu_options.allow_growth = True
-sess = tf.Session(config=tf_config)
-from keras import backend as K, Input
+os.environ["CUDA_VISIBLE_DEVICES"]="7" #TODO Move to 0. 
 
+
+import tensorflow as tf
+tf.compat.v1.disable_eager_execution()
+tf_config = tf.compat.v1.ConfigProto()
+tf_config.gpu_options.allow_growth = True
+sess = tf.compat.v1.Session(config=tf_config)
+import tensorflow.compat.v1.keras.backend as K
 K.set_session(sess)
 
+ 
 #TODO Handle interrupted sequences, and add dying-prediction
 
 
@@ -55,7 +54,7 @@ def main(args):
         os.makedirs(savefolder)
 
     #Loading z-values and actions. Expecting a compressed npz-file
-    rnn_training_data = np.load(training_data_file)
+    rnn_training_data = np.load(training_data_file,allow_pickle=True)
     if data_size==-1:
         action_file = rnn_training_data['action']
         latent_file = rnn_training_data['latent']

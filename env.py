@@ -6,7 +6,7 @@ from gym import spaces
 #import doom_py
 import tensorflow as tf
 
-from scipy.misc import imresize as resize
+from cv2 import resize
 from gym.spaces.box import Box
 #from ppaquette_gym_doom.doom_take_cover import DoomTakeCoverEnv
 from vizdoomgym.envs import VizdoomTakeCover

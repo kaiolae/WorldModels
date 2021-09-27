@@ -1,5 +1,13 @@
-import keras
-from keras.callbacks import EarlyStopping
+import tensorflow as tf
+tf.compat.v1.disable_eager_execution()
+tf_config = tf.compat.v1.ConfigProto()
+tf_config.gpu_options.allow_growth = True
+sess = tf.compat.v1.Session(config=tf_config)
+import tensorflow.compat.v1.keras.backend as K
+K.set_session(sess)
+
+from tensorflow.compat.v1 import keras
+from tensorflow.compat.v1.keras.callbacks import EarlyStopping
 #Parameters of the MDN-RNN
 import mdn
 
